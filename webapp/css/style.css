@@ -1,1 +1,26 @@
 /* Enter your custom styles here */
+.title {
+    background-color: #aac2e8;
+    background-image: linear-gradient(to bottom, #aac2e8, #ffffff);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.contentWrapper {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically if needed */
+    height: 100%; /* Full height */
+}
+
+.smallForm {
+    max-width: 500px; /* Adjust as needed */
+    width: 100%; /* Full width within the max-width */
+}
+.labelSpacing {
+    margin-right: 20px; /* Adjust the space between label and input */
+}
+.blueBackground {
+    background-color: #aac2e8; /* Blue color */
+    padding: 10px; /* Optional: Add some padding */
+    border-radius: 4px; /* Optional: Add rounded corners */
+    color: #ba4040; /* Text color to contrast with the background */
+}

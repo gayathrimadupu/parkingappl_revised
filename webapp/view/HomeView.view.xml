@@ -1,5 +1,5 @@
 <mvc:View
-    controllerName="com.app.parkingappl.controller.HomeView"
+      controllerName="com.app.parkingappl.controller.HomeView"
     xmlns="sap.uxap"
     xmlns:layout="sap.ui.layout"
     xmlns:form="sap.ui.layout.form"
@@ -14,8 +14,6 @@
     xmlns:ui="sap.ui.commons"
     xmlns:html="http://www.w3.org/1999/xhtml"
 >
-        <!--  -->
-
     <ObjectPageLayout
         id="idUserDataPage"
         enableLazyLoading="true"
@@ -25,7 +23,7 @@
         sectionChange="onSectionChange"
     >
         <headerTitle>
-            <ObjectPageDynamicHeaderTitle id="idObjectPageDynamicHeaderTitle">
+            <ObjectPageDynamicHeaderTitle id="idObjectPageDynamicHeaderTitle"  class="title">
                 <expandedHeading>
                     <!-- <m:Title
                         id="IdLibraryTitle"
@@ -45,11 +43,41 @@
                             visible="false"
                         />
                         <m:Image
-                        id="movingImage"
-                        src="./images/TruckIn.gif"
-                        class="movingImage"
-                        visible="false"
-                    />
+                            id="movingImage"
+                            src="./images/TruckIn.gif"
+                            class="movingImage"
+                            visible="false"
+                        />
+                        <m:Title
+                            id="idExpandedHeadingTitle"
+                            text="Parking Management"
+                            wrapping="true"
+                            level="H4"
+                        />
+
+                        <m:Button
+                            id="idReservations"
+                            class="buttonBlue"
+                            tooltip="Reservation Request"
+                            icon="sap-icon://request"
+                            press="onReservationsPress"
+                        >
+                            <m:customData>
+                                <m:BadgeCustomData
+                                    id="idbadghqwe"
+                                    value="{/ZPARKING_RESERVE_SSet/$count}"
+                                    visible="true"
+                                    animation="Update"
+                                />
+                            </m:customData>
+                        </m:Button>
+                        <m:Button
+                            id="idRdfeservdfvbations"
+                            class="buttonRed parkingAnalysis"
+                            icon="sap-icon://pie-chart"
+                            tooltip="Data visualization"
+                            press="onDataAnalysisPress"
+                        />
                     </m:HBox>
                 </expandedHeading>
 
@@ -63,234 +91,140 @@
                             id="idUserName"
                             text="Parking Management"
                             wrapping="true"
+                            level="H4"
                         />
                     </m:FlexBox>
                 </snappedHeading>
-                <actions>
-                    
-                </actions>
-
+                <actions />
             </ObjectPageDynamicHeaderTitle>
         </headerTitle>
 
-        <headerContent>
-            <m:FlexBox
-                id="idFlexBok2"
-                wrap="Wrap"
-                class="Header"
+        <sections >
+            <ObjectPageSection
+                titleUppercase="false"
+                id="idBorrowBooksSection11"
+                title="Details"
+                class="Content"
+                
             >
-                <layout:VerticalLayout
-                    id="idVerticalLayout"
-                    class="sapUiSmallMarginBeginEnd InputForm animatedBorder"
-                >
-                    <layout:HorizontalLayout
-                        id="idHorizantalLayout"
-                        class="sapUiSmallMarginBeginEnd"
+                <subSections>
+                    <ObjectPageSubSection
+                        id="idBorrowBooksSubSection11"
+                        title="Lot Allocation"
+                        
                     >
-                        <m:VBox
-                            id="idvBox1"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label
-                                id="idLable1"
-                                text="Driver Name"
-                                class="textColor"
-                            /> -->
-                            <m:Input
-                                id="idDriverName"
-                                placeholder="Enter Driver Name"
-                                change="onDriverNameChange"
-                            />
-                        </m:VBox>
-                        <m:VBox
-                            id="idvBox2"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label
-                                id="idLable2"
-                                text="Driver Mobile"
-                                class="textColor"
+                        <blocks>
+                           <layout:HorizontalLayout
+        id="idreservehbox"
+        alignItems="Center"
+        justifyContent="Center"
+        width="100%"
+        class="contentWrapper"
+    >
+        <form:SimpleForm
+            id="idSimpleForm"
+            layout="ResponsiveGridLayout"
+            editable="true"
+            class="smallForm"
+        >
+            <!-- Driver Name -->
+            <layout:HorizontalLayout>
+                <m:Label text="Driver Name" class="labelSpacing" />
+                <m:Input
+                    id="idDriverName"
+                    placeholder="Enter Driver Name"
+                    width="200px"
+                    change="onDriverNameChange"
+                />
+            </layout:HorizontalLayout>
 
-                            /> -->
-                            <m:Input
-                                id="idDriverMobile"
-                                placeholder="Enter Driver Mobile"
-                                type="Number"
-                                change="onMobileNumberChange"
-                            />
-                        </m:VBox>
-                        <m:VBox
-                            id="idvBox3"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label
-                                id="idVehicle"
-                                text="Vehicle Number"
-                                class="textColor"
+            <!-- Driver Mobile -->
+            <layout:HorizontalLayout>
+                <m:Label text="Driver Mobile" class="labelSpacing" />
+                <m:Input
+                    id="idDriverMobile"
+                    placeholder="Enter Driver Mobile"
+                    width="200px"
+                    type="Number"
+                    change="onMobileNumberChange"
+                />
+            </layout:HorizontalLayout>
 
-                            /> -->
-                            <m:Input
-                                id="idVehicleNUmber"
-                                placeholder="Enter Vehicle Number"
-                                change="onVehicleNumberChange"
-                            />
-                        </m:VBox>
-                    </layout:HorizontalLayout>
-                    <layout:HorizontalLayout
-                        id="idHorizantalLayout2"
-                        class="sapUiSmallMarginBeginEnd"
-                    >
-                        <m:VBox
-                            id="idvBoasfwetfx1"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label
-                                id="idLab33r__le1"
-                                text="Vendor Name"
-                                class="textColor"
+            <!-- Vehicle Number -->
+            <layout:HorizontalLayout>
+                <m:Label text="Vehicle Number" class="labelSpacing" />
+                <m:Input
+                    id="idVehicleNumber"
+                    placeholder="Enter Vehicle Number"
+                    width="200px"
+                    change="onVehicleNumberChange"
+                />
+            </layout:HorizontalLayout>
 
-                            /> -->
-                            <m:Input
-                                id="idVendorName___"
-                                placeholder="Enter Vendor Name"
-                                change=""
-                            />
-                        </m:VBox>
-                        <m:VBox
-                            id="idvBox7"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label
-                                id="_IDGenLabel555"
-                                text="Delivery Type"
-                                class="textColor"
+            <!-- Vendor Name -->
+            <layout:HorizontalLayout>
+                <m:Label text="Vendor Name" class="labelSpacing" />
+                <m:Input
+                    id="idVendorName"
+                    placeholder="Enter Vendor Name"
+                    width="200px"
+                />
+            </layout:HorizontalLayout>
 
-                            /> -->
-                            <m:Select id="idTypeOfDelivery">
-                                <core:Item
-                                    id="_IDGenI23esatem234"
-                                    key="Select"
-                                    text="Select"
-                                />
-                                <core:Item
-                                    id="_IDGenItem234"
-                                    key="InBound"
-                                    text="InBound"
-                                />
-                                <core:Item
-                                    id="_IDGenItem2344"
-                                    key="OutBound"
-                                    text="OutBound"
-                                />
-                            </m:Select>
-                        </m:VBox>
-                        <m:VBox
-                            id="idvBox4"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label
-                                id="_IDGenLabel1"
-                                text="Parking Slot"
-                                class="textColor"
-
-                            /> -->
-                            <m:Select
-                                id="parkingLotSelect"
-                                items="{path: '/ZPARKING_SLOTS_SSet', filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
-                                change="onParkingLotSelectChange"
-                            >
-                                <core:Item
-                                    id="_IDGenItem3"
-                                    key="{Slotnumbers}"
-                                    text="{Slotnumbers}"
-                                />
-                            </m:Select>
-                        </m:VBox>
-                        <!-- <m:VBox id="idvBox5">
-                            <m:Label
-                                id="idLable5"
-                                text="Check In"
-                            />
-                            <m:Input id="input5" />
-                        </m:VBox> -->
-                        <m:VBox
-                            id="idvBox6"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label id="idLable6" /> -->
-                            <m:Button
-                                id="idButtonAssign"
-                                type="Unstyled"
-                                class="buttonBlue"
-                                text="Assign"
-                                press="onAssignPress"
-                            />
-                            <!-- <m:Image
-                                id="photoImage"
-                                width="320px"
-                                height="240px"
-                            />
-                            <html:canvas
-                                id="video"
-                                width="320px"
-                                height="240px"
-                            />
-                            <html:div
-                                id="videoContainer"
-                                style="width: 640px; height: 480px;"
-                            >
-                            </html:div> -->
-                        </m:VBox>
-
-                        <m:VBox
-                            id="idvBodcfvfdx6"
-                            class="Inputs"
-                        >
-                            <!-- <m:Label id="idLable6" /> -->
-                        </m:VBox>
-                    </layout:HorizontalLayout>
-                </layout:VerticalLayout>
-
-                <m:HBox
-                    id="idvBox8"
-                    class="Reservationsbtn"
-                >
-                    <!-- <m:Label id="idLable8" /> -->
-                    <m:Button
-                        id="idReservations"
-                        type="Unstyled"
-                        class="buttonBlue"
-                        text="Reservations"
-                        press="onReservationsPress"
-                    >
-                        <m:customData>
-                            <m:BadgeCustomData
-                                id="idbadghqwe"
-                                value="{/ZPARKING_RESERVE_SSet/$count}"
-                                visible="true"
-                                animation="Update"
-                            />
-                        </m:customData>
-                    </m:Button>
-                    <m:Button
-                        id="idRdfeservdfvbations"
-                        type="Unstyled"
-                        class="buttonRed parkingAnalysis"
-                        text="Parking Analysis"
-                        press="onDataAnalysisPress"
+            <!-- Delivery Type -->
+            <layout:HorizontalLayout>
+                <m:Label text="Delivery Type" class="labelSpacing" />
+                <m:Select id="idTypeOfDelivery" width="200px">
+                    <core:Item
+                        key="Select"
+                        text="Select"
                     />
-                    <!-- <m:Button
-                        id="id_rvdfvbations"
-                        type="Unstyled"
-                        class="buttonRed"
-                        text="TEST"
-                        press="updateSoltsStatusbyDate"
-                    /> -->
-                </m:HBox>
-            </m:FlexBox>
-        </headerContent>
+                    <core:Item
+                        key="InBound"
+                        text="InBound"
+                    />
+                    <core:Item
+                        key="OutBound"
+                        text="OutBound"
+                    />
+                </m:Select>
+            </layout:HorizontalLayout>
 
-        <sections>
+            <!-- Parking Slot -->
+            <layout:HorizontalLayout>
+                <m:Label text="Parking Slot" class="labelSpacing" />
+                <m:Select
+                    id="parkingLotSelect"
+                    items="{path: '/ZPARKING_SLOTS_SSet', filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
+                    change="onParkingLotSelectChange"
+                    width="200px"
+                >
+                    <core:Item
+                        key="{Slotnumbers}"
+                        text="{Slotnumbers}"
+                    />
+                </m:Select>
+            </layout:HorizontalLayout>
+
+            <!-- Assign Button -->
+            <layout:HorizontalLayout>
+                <m:Label text="" />
+                <m:Button
+                    id="idButtonAssign"
+                    type="Unstyled"
+                    class="buttonBlue"
+                    text="Assign"
+                    press="onAssignPress"
+                    width="200px"
+                />
+            </layout:HorizontalLayout>
+        </form:SimpleForm>
+    </layout:HorizontalLayout>
+    </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
             <ObjectPageSection
                 titleUppercase="false"
                 id="idBorrowBooksSection"
@@ -307,6 +241,7 @@
                             <m:Table
                                 id="idAssignedTable"
                                 mode="MultiSelect"
+                                 alternateRowColors="true"
                                 items="{/ZPARKING_SLOTS_SSet}"
                                 class="Table"
                             >
@@ -519,6 +454,7 @@
                             <m:Table
                                 id="idAllSlots"
                                 mode="MultiSelect"
+                                alternateRowColors="true"
                                 items="{/ZPARKING_SLOTS_SSet}"
                             >
                                 <m:headerToolbar>
@@ -646,7 +582,10 @@
                                     </m:OverflowToolbar>
                                 </m:headerToolbar>
                                 <m:columns>
-                                 <m:Column id="_IDGendhgfrColumn3" visible="false">
+                                    <m:Column
+                                        id="_IDGendhgfrColumn3"
+                                        visible="false"
+                                    >
                                         <m:Title
                                             id="_IDGenTitlrthe5"
                                             text="UUID"
@@ -702,7 +641,7 @@
                                         class="TableContent"
                                     >
                                         <m:cells>
-                                         <m:Text
+                                            <m:Text
                                                 id="_IDGenTexsrgrtjt3"
                                                 text="{Uuid}"
                                                 class="TableContent"
@@ -760,6 +699,7 @@
                     <ObjectPageSubSection
                         id="_IDGenObjectPageSubSection2"
                         titleUppercase="false"
+                         class="blueBackground"
                     >
                         <blocks>
                             <m:Table

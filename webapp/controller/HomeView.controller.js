@@ -1550,7 +1550,7 @@ sap.ui.define([
 
                     if (item.Deliverytype === "INBOUND") {
                         oData[formattedDate].inwardCount += 1;
-                    } else if (item.Deliverytype === "OUTBOUND") {
+                    } else if (item.deliveryType === "OutBound") {
                         oData[formattedDate].outwardCount += 1;
                     }
 
