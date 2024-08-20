@@ -17,7 +17,19 @@
                 id="idReservationsTable"
                 inset="false"
                 mode="SingleSelectMaster"
-                items="{/ZPARKING_RESERVE_SSet}"
+                          
+items
+="{
+path
+: '/ZPARKING_RESERVE_SSet',
+filters
+: [{
+path
+: 'Reservedslot',
+operator
+: 'EQ',
+value1
+: ''}]}"
                 
             >
                 <headerToolbar>
@@ -30,14 +42,14 @@
                         <Button
                             id="idAddButton"
                             text="Reserve"
-                            type="Unstyled"
+                          type="Accept"
                             class="buttonBlue"
                             press="onConfirmReservePress"
                         />
                         <Button
                             id="idRejectButton"
                             text="Reject"
-                            type="Unstyled"
+                           type="Reject"
                             class="buttonRed"
                             press="onRejectPress"
                         />

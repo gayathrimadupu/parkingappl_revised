@@ -1,0 +1,29 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns="sap.m"
+>
+<Dialog
+    id="idUnassignConfirmDialog"
+    title="Confirm Unassign"
+    type="Message">
+    <beginButton>
+            <Button
+                id="drefsdcszvewadi"
+                text="Reject"
+                type="Negative"
+                press=".onConfirmUnassign"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                id="aavfegi"
+                text="Close"
+                press=".onCancelUnassign"
+            />
+        </endButton>
+
+    
+    <Text text="Are you sure you want to unassign this vehicle?" />
+</Dialog>
+</core:FragmentDefinition>

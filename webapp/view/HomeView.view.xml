@@ -1,5 +1,5 @@
 <mvc:View
-      controllerName="com.app.parkingappl.controller.HomeView"
+    controllerName="com.app.parkingappl.controller.HomeView"
     xmlns="sap.uxap"
     xmlns:layout="sap.ui.layout"
     xmlns:form="sap.ui.layout.form"
@@ -23,31 +23,18 @@
         sectionChange="onSectionChange"
     >
         <headerTitle>
-            <ObjectPageDynamicHeaderTitle id="idObjectPageDynamicHeaderTitle"  class="title">
+            <ObjectPageDynamicHeaderTitle
+                id="idObjectPageDynamicHeaderTitle"
+                class="title"
+            >
                 <expandedHeading>
-                    <!-- <m:Title
-                        id="IdLibraryTitle"
-                        text="Parking Management"
-                        wrapping="true"
-                    /> -->
-                    <m:HBox id="tfhIdnsdjn_nad">
-                        <m:Image
-                            class="logo"
-                            id="idVMMLogo"
-                            src="./images/Vishal-MegaMart.png"
-                        />
-                        <m:Image
-                            id="movingImage2"
-                            src="./images/TruckReturn.gif"
-                            class="movingImageOut"
-                            visible="false"
-                        />
-                        <m:Image
-                            id="movingImage"
-                            src="./images/TruckIn.gif"
-                            class="movingImage"
-                            visible="false"
-                        />
+                    <m:HBox
+                        id="idExpandedHeadingBox"
+                        width="100%"
+                        justifyContent="SpaceBetween"
+                        alignItems="Center"
+                    >
+                        <!-- Title on the left -->
                         <m:Title
                             id="idExpandedHeadingTitle"
                             text="Parking Management"
@@ -55,172 +42,196 @@
                             level="H4"
                         />
 
-                        <m:Button
-                            id="idReservations"
-                            class="buttonBlue"
-                            tooltip="Reservation Request"
-                            icon="sap-icon://request"
-                            press="onReservationsPress"
-                        >
-                            <m:customData>
-                                <m:BadgeCustomData
-                                    id="idbadghqwe"
-                                    value="{/ZPARKING_RESERVE_SSet/$count}"
-                                    visible="true"
-                                    animation="Update"
-                                />
-                            </m:customData>
-                        </m:Button>
-                        <m:Button
-                            id="idRdfeservdfvbations"
-                            class="buttonRed parkingAnalysis"
-                            icon="sap-icon://pie-chart"
-                            tooltip="Data visualization"
-                            press="onDataAnalysisPress"
-                        />
+                        <!-- Buttons aligned to the right -->
                     </m:HBox>
                 </expandedHeading>
 
-                <snappedHeading>
-                    <m:FlexBox
-                        id="idFlexBoxHeaderContent"
-                        fitContainer="true"
+                <actions>
+                    <m:HBox
+                        id="idButtonsBox"
                         alignItems="Center"
                     >
-                        <m:Title
-                            id="idUserName"
-                            text="Parking Management"
-                            wrapping="true"
-                            level="H4"
-                        />
-                    </m:FlexBox>
-                </snappedHeading>
-                <actions />
+                       <m:Button
+    id="idReservations"
+    tooltip="Reservation Request"
+    icon="sap-icon://request"
+    press="onReservationsPress"
+    class="whiteButton"
+>
+    <m:customData>
+        <m:BadgeCustomData
+            id="idBadgeCustomData"
+            value="{/ZPARKING_RESERVE_SSet/$count}"
+            visible="true"
+            animation="Update"
+        />
+    </m:customData>
+</m:Button>
+
+<m:Button
+    id="idDataVisualization"
+    icon="sap-icon://pie-chart"
+    tooltip="Data visualization"
+    press="onDataAnalysisPress"
+    class="whiteButton"
+/>
+                    </m:HBox>
+                </actions>
             </ObjectPageDynamicHeaderTitle>
         </headerTitle>
 
-        <sections >
+        <sections>
             <ObjectPageSection
                 titleUppercase="false"
                 id="idBorrowBooksSection11"
                 title="Details"
                 class="Content"
-                
             >
                 <subSections>
                     <ObjectPageSubSection
                         id="idBorrowBooksSubSection11"
                         title="Lot Allocation"
-                        
+                        class="blueBackground"
                     >
                         <blocks>
-                           <layout:HorizontalLayout
-        id="idreservehbox"
-        alignItems="Center"
-        justifyContent="Center"
-        width="100%"
-        class="contentWrapper"
-    >
-        <form:SimpleForm
-            id="idSimpleForm"
-            layout="ResponsiveGridLayout"
-            editable="true"
-            class="smallForm"
-        >
-            <!-- Driver Name -->
-            <layout:HorizontalLayout>
-                <m:Label text="Driver Name" class="labelSpacing" />
-                <m:Input
-                    id="idDriverName"
-                    placeholder="Enter Driver Name"
-                    width="200px"
-                    change="onDriverNameChange"
-                />
-            </layout:HorizontalLayout>
+                            <layout:HorizontalLayout
+                                id="idreservehbox"
+                                alignItems="Center"
+                                justifyContent="Center"
+                                width="100%"
+                                class="contentWrapper"
+                            >
+                                <form:SimpleForm
+                                    id="idSimpleForm1"
+                                    layout="ResponsiveGridLayout"
+                                    editable="true"
+                                    class="smallForm formBackground"
+                                >
+                                    <!-- Driver Name -->
+                                    <layout:HorizontalLayout>
+                                        <m:Label
+                                            text="Driver Name:"
+                                           
+                                            class="labelSpacing labelColor"
+                                        />
+                                        <m:Input
+                                            id="idDriverName"
+                                            placeholder="Enter Driver Name"
+                                            width="200px"
+                                            change="onDriverNameChange"
+                                            class="inputColor"
+                                        />
+                                    </layout:HorizontalLayout>
 
-            <!-- Driver Mobile -->
-            <layout:HorizontalLayout>
-                <m:Label text="Driver Mobile" class="labelSpacing" />
-                <m:Input
-                    id="idDriverMobile"
-                    placeholder="Enter Driver Mobile"
-                    width="200px"
-                    type="Number"
-                    change="onMobileNumberChange"
-                />
-            </layout:HorizontalLayout>
+                                    <!-- Driver Mobile -->
+                                    <layout:HorizontalLayout>
+                                        <m:Label
+                                            text="Driver Mobile:"
+                                           
+                                            class="labelSpacing labelColor"
+                                        />
+                                        <m:Input
+                                            id="idDriverMobile"
+                                            placeholder="Enter Driver Mobile"
+                                            width="200px"
+                                            type="Number"
+                                            change="onMobileNumberChange"
+                                            class="inputColor"
+                                        />
+                                    </layout:HorizontalLayout>
 
-            <!-- Vehicle Number -->
-            <layout:HorizontalLayout>
-                <m:Label text="Vehicle Number" class="labelSpacing" />
-                <m:Input
-                    id="idVehicleNumber"
-                    placeholder="Enter Vehicle Number"
-                    width="200px"
-                    change="onVehicleNumberChange"
-                />
-            </layout:HorizontalLayout>
+                                    <!-- Vehicle Number -->
+                                    <layout:HorizontalLayout>
+                                        <m:Label
+                                            text="Vehicle  Num:"
+                                            
+                                            class="labelSpacing labelColor"
+                                        />
+                                        <m:Input
+                                            id="idVehicleNUmber"
+                                            placeholder="Enter Vehicle Number"
+                                            width="200px"
+                                            change="onVehicleNumberChange"
+                                            class="inputColor"
+                                        />
+                                    </layout:HorizontalLayout>
 
-            <!-- Vendor Name -->
-            <layout:HorizontalLayout>
-                <m:Label text="Vendor Name" class="labelSpacing" />
-                <m:Input
-                    id="idVendorName"
-                    placeholder="Enter Vendor Name"
-                    width="200px"
-                />
-            </layout:HorizontalLayout>
+                                    <!-- Vendor Name -->
+                                    <layout:HorizontalLayout>
+                                        <m:Label
+                                            text="Vendor Name:"
+                                           
+                                            class="labelSpacing labelColor"
+                                        />
+                                        <m:Input
+                                            id="idVendorName___"
+                                            placeholder="Enter Vendor Name"
+                                            width="200px"
+                                            class="inputColor"
+                                        />
+                                    </layout:HorizontalLayout>
 
-            <!-- Delivery Type -->
-            <layout:HorizontalLayout>
-                <m:Label text="Delivery Type" class="labelSpacing" />
-                <m:Select id="idTypeOfDelivery" width="200px">
-                    <core:Item
-                        key="Select"
-                        text="Select"
-                    />
-                    <core:Item
-                        key="InBound"
-                        text="InBound"
-                    />
-                    <core:Item
-                        key="OutBound"
-                        text="OutBound"
-                    />
-                </m:Select>
-            </layout:HorizontalLayout>
+                                    <!-- Delivery Type -->
+                                    <layout:HorizontalLayout>
+                                        <m:Label
+                                            text="Delivery Type:"
+                                            class="labelSpacing labelColor"
+                                        />
+                                        <m:Select
+                                            id="idTypeOfDelivery"
+                                            width="200px"
+                                            class="inputColor"
+                                        >
+                                            <core:Item
+                                                key="Select"
+                                                text="Select"
+                                            />
+                                            <core:Item
+                                                key="InBound"
+                                                text="InBound"
+                                            />
+                                            <core:Item
+                                                key="OutBound"
+                                                text="OutBound"
+                                            />
+                                        </m:Select>
+                                    </layout:HorizontalLayout>
 
-            <!-- Parking Slot -->
-            <layout:HorizontalLayout>
-                <m:Label text="Parking Slot" class="labelSpacing" />
-                <m:Select
-                    id="parkingLotSelect"
-                    items="{path: '/ZPARKING_SLOTS_SSet', filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
-                    change="onParkingLotSelectChange"
-                    width="200px"
-                >
-                    <core:Item
-                        key="{Slotnumbers}"
-                        text="{Slotnumbers}"
-                    />
-                </m:Select>
-            </layout:HorizontalLayout>
+                                    <!-- Parking Slot -->
+                                    <layout:HorizontalLayout>
+                                        <m:Label
+                                            text="Parking Slot:"
+                                            class="labelSpacing labelColor"
+                                        />
+                                        <m:Select
+                                            id="parkingLotSelect"
+                                            items="{path: '/ZPARKING_SLOTS_SSet', filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
+                                            change="onParkingLotSelectChange"
+                                            width="200px"
+                                            class="inputColor"
+                                        >
+                                            <core:Item
+                                                key="{Slotnumbers}"
+                                                text="{Slotnumbers}"
+                                            />
+                                        </m:Select>
+                                    </layout:HorizontalLayout>
 
-            <!-- Assign Button -->
-            <layout:HorizontalLayout>
-                <m:Label text="" />
-                <m:Button
-                    id="idButtonAssign"
-                    type="Unstyled"
-                    class="buttonBlue"
-                    text="Assign"
-                    press="onAssignPress"
-                    width="200px"
-                />
-            </layout:HorizontalLayout>
-        </form:SimpleForm>
-    </layout:HorizontalLayout>
-    </blocks>
+                                    <!-- Assign Button -->
+                                    <layout:HorizontalLayout>
+                                        <m:Label text="" />
+                                        <m:Button
+                                            id="idButtonAssign"
+                                            class="blueButton"
+                                            type="Default"
+                                            text="Assign"
+                                            press="onAssignPress"
+                                            width="200px"
+                                        />
+                                    </layout:HorizontalLayout>
+                                </form:SimpleForm>
+                            </layout:HorizontalLayout>
+                        </blocks>
                     </ObjectPageSubSection>
                 </subSections>
             </ObjectPageSection>
@@ -236,13 +247,14 @@
                         id="idBorrowBooksSubSection"
                         title="Assigned Slots"
                         titleUppercase="false"
+                        class="blueBackground"
                     >
                         <blocks>
                             <m:Table
                                 id="idAssignedTable"
                                 mode="MultiSelect"
-                                 alternateRowColors="true"
-                                items="{/ZPARKING_SLOTS_SSet}"
+                                alternateRowColors="true"
+                                items="{path: '/ZPARKING_SLOTS_SSet',filters: [{path: 'Status',operator: 'EQ',value1: 'NOT AVAILABLE'}]}"
                                 class="Table"
                             >
                                 <m:headerToolbar>
@@ -261,17 +273,12 @@
                                             width="20%"
                                             placeholder="Search here"
                                         />
-                                        <m:Button
-                                            id="idRefreshBtn2"
-                                            icon="sap-icon://refresh"
-                                            type="Emphasized"
-                                            press="onRefresh"
-                                        />
+
                                         <m:Button
                                             id="idBtnEdit"
                                             text="Edit"
                                             icon="sap-icon://edit"
-                                            type="Unstyled"
+                                            type="Emphasized"
                                             class="buttonBlue"
                                             press="onEditPress"
                                             tooltip="Click to Edit"
@@ -280,7 +287,7 @@
                                             id="idBtnSave"
                                             text="Save"
                                             icon="sap-icon://save"
-                                            type="Success"
+                                            type="Accept"
                                             press="onSavePress"
                                             tooltip="Save changes"
                                             visible="false"
@@ -289,24 +296,22 @@
                                             id="idBtUnassign"
                                             visible="true"
                                             text="Unassign"
-                                            type="Unstyled"
-                                            class="buttonRed"
+                                            type="Reject"
                                             press="onUnassignPress"
                                             tooltip="Click to Unassign"
                                         />
                                         <m:Button
                                             id="idBtnCancel"
                                             text="Cancel"
-                                            type="Unstyled"
-                                            class="buttonRed"
-                                            visible="false"
+                                            type="Transparent"
+                                            visible="true"
                                             press="onCanclePress"
-                                            tooltip="Click to Cancle"
+                                            tooltip="Click to Cancel"
                                         />
                                         <m:Button
                                             id="idButtoidScan"
-                                            type="Default"
-                                            text="Scan to UnAssign"
+                                            type="Neutral"
+                                            text=" UnAssign using Scanner"
                                             icon="sap-icon://bar-code"
                                             press="onScanPress"
                                         />
@@ -370,51 +375,52 @@
                                         id="idBooksTableColListItem"
                                         type="Navigation"
                                         class="TableContent"
+                                       
                                     >
                                         <m:cells>
                                             <m:Text
                                                 id="AuColValueId"
                                                 text="{Slotnumbers}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="AuthorColValueId"
                                                 text="{Assigneddrivername}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="idBookNameColValue"
                                                 text="{Assigneddrivermobile}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="idavailableQuantityColValue"
                                                 text="{Assignedvehiclenumber}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="idISBNColValue"
-                                                text="{Deliverytype}"
-                                                class="TableContent"
+                                                text="{Assigneddeliverytype}"
+                                               
                                             />
 
                                             <m:VBox id="idinTablevbox">
                                                 <m:Text
                                                     id="isd"
                                                     text="{Slotnumbers}"
-                                                    class="TableContent"
+                                                 
                                                 />
                                                 <m:Select
                                                     id="idintableparkingLotSelect"
                                                     visible="false"
                                                     items="{path: '/ZPARKING_SLOTS_SSet', filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
-                                                    class="TableContent"
+                                                
                                                 >
                                                     <core:Item
                                                         id="I___D_IDGenItem3"
                                                         key="{Slotnumbers}"
                                                         text="{Slotnumbers}"
-                                                        class="TableContent"
+                                                    
                                                     />
                                                 </m:Select>
                                             </m:VBox>
@@ -422,12 +428,12 @@
                                             <m:Text
                                                 id="IdsewfHHisd"
                                                 text="{VendorName}"
-                                                class="TableContent"
+                                              
                                             />
                                             <m:Text
                                                 id="ijsonmf"
                                                 text="{Assignedcheckintime}"
-                                                class="TableContent"
+                                           
                                             />
                                         </m:cells>
                                     </m:ColumnListItem>
@@ -441,21 +447,21 @@
             <ObjectPageSection
                 titleUppercase="false"
                 id="idUserBorrowedBooksSection"
-                title="Parking Slots"
+                title="All Parking Slots"
                 class="Content"
             >
                 <subSections>
                     <ObjectPageSubSection
                         id="idUserBorrowedBooksSubSection"
                         titleUppercase="false"
-                        class="Content"
+                        class="blueBackground"
                     >
                         <blocks>
                             <m:Table
                                 id="idAllSlots"
-                                mode="MultiSelect"
                                 alternateRowColors="true"
                                 items="{/ZPARKING_SLOTS_SSet}"
+                                class="customTable"
                             >
                                 <m:headerToolbar>
                                     <m:OverflowToolbar
@@ -468,12 +474,12 @@
                                         <m:ToolbarSpacer
                                             id="_IDGenToolbarSpacer1"
                                         />
-                                        <m:Button
+                                        <!-- <m:Button
                                             id="_IDGenButton1"
                                             icon="sap-icon://refresh"
                                             type="Emphasized"
                                             press="onRefresh"
-                                        />
+                                        /> -->
                                     </m:OverflowToolbar>
                                 </m:headerToolbar>
                                 <m:columns>
@@ -512,13 +518,19 @@
                                             <m:Text
                                                 id="_IDGenText1"
                                                 text="{Slotnumbers}"
-                                                class="TableContent"
+                                             
                                             />
-                                            <m:Text
+                                            <!-- <m:Text
                                                 id="_IDGenText1jadf"
                                                 text="{Status}"
-                                                class="TableContent"
-                                            />
+                                             
+                                            /> -->
+                                           <m:ObjectStatus
+    id="IDGenText11"
+    text="{Status}"
+    class="StatusBold"
+    state="{path: 'Status', formatter: '.statusColorFormatter'}"
+/>
                                         </m:cells>
                                     </m:ColumnListItem>
                                 </m:items>
@@ -538,13 +550,23 @@
                     <ObjectPageSubSection
                         id="_IDGenObjectPageSubSection1"
                         titleUppercase="false"
+                        class="blueBackground"
                     >
                         <blocks>
                             <m:Table
                                 id="idReservedTable__"
                                 mode="MultiSelect"
                                 alternateRowColors="true"
-                                items="{/ZPARKING_RESERVE_SSet}"
+                                items="{path
+: '/ZPARKING_RESERVE_SSet',
+filters
+: [{
+path
+: 'Reservedslot',
+operator
+: 'NE',
+value1
+: ''}]}"
                             >
                                 <m:headerToolbar>
                                     <m:OverflowToolbar
@@ -561,24 +583,24 @@
                                             id="idJVGYTFKJJPP"
                                             icon="sap-icon://add"
                                             text="Assign"
-                                            type="Unstyled"
-                                            class="buttonBlue"
+                                            type="Accept"
+                                            class="default"
                                             press="onAssignfromReservations"
                                         />
                                         <m:Button
                                             id="idJJPP"
                                             icon="sap-icon://reject"
                                             text="Delete"
-                                            type="Unstyled"
-                                            class="buttonRed"
-                                            press="onDeleteReservedPressToConfirm"
+                                            type="Reject"
+                                            class="default"
+                                           press="onDeleteReservedPressToCoitenfirm"
                                         />
-                                        <m:Button
+                                        <!-- <m:Button
                                             id="_IDGenButton2"
                                             icon="sap-icon://refresh"
                                             type="Emphasized"
                                             press="onRefresh"
-                                        />
+                                        /> -->
                                     </m:OverflowToolbar>
                                 </m:headerToolbar>
                                 <m:columns>
@@ -644,22 +666,22 @@
                                             <m:Text
                                                 id="_IDGenTexsrgrtjt3"
                                                 text="{Uuid}"
-                                                class="TableContent"
+                                              
                                             />
                                             <m:Text
                                                 id="_IDGenText3"
                                                 text="{Drivername}"
-                                                class="TableContent"
+                                           
                                             />
                                             <m:Text
                                                 id="_IDGenText4"
                                                 text="{Drivermobile}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenTextwer5"
                                                 text="{Vehiclenumber}"
-                                                class="TableContent"
+                                             
                                             />
                                             <!-- <m:Text
                                                 id="_IDGenTecvxt5"
@@ -668,17 +690,17 @@
                                             <m:Text
                                                 id="_IDGendsfgvText5"
                                                 text="{Reservedslot}"
-                                                class="TableContent"
+                                              
                                             />
                                             <m:Text
                                                 id="_IDGendssr45tyhgf3456frfgvText5"
                                                 text="{Vendorname}"
-                                                class="TableContent"
+                                          
                                             />
                                             <m:Text
                                                 id="_IDGendssr0_3456frfgvText5"
                                                 text="{Reserveddate}"
-                                                class="TableContent"
+                                              
                                             />
                                         </m:cells>
                                     </m:ColumnListItem>
@@ -699,13 +721,14 @@
                     <ObjectPageSubSection
                         id="_IDGenObjectPageSubSection2"
                         titleUppercase="false"
-                         class="blueBackground"
+                        class="blueBackground"
                     >
                         <blocks>
                             <m:Table
                                 id="idHistoryTable"
                                 items="{/ZPARKING_HISTORYSet}"
                                 mode="None"
+                                alternateRowColors="true"
                             >
                                 <m:headerToolbar>
                                     <m:OverflowToolbar
@@ -725,12 +748,12 @@
                                             width="20%"
                                             placeholder="Search here"
                                         />
-                                        <m:Button
+                                        <!-- <m:Button
                                             id="_IDGenButton3"
                                             icon="sap-icon://refresh"
                                             type="Emphasized"
                                             press="onRefresh"
-                                        />
+                                        /> -->
                                     </m:OverflowToolbar>
                                 </m:headerToolbar>
                                 <m:columns>
@@ -793,42 +816,42 @@
                                             <m:Text
                                                 id="_IDGenText6"
                                                 text="{Drivername}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenText7"
                                                 text="{Drivermobile}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenText8"
                                                 text="{Vehiclenumber}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenText9"
                                                 text="{Deliverytype}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenText10"
                                                 text="{Historyslotnumber}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenText10aefe"
                                                 text="{VendorName}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenText11"
                                                 text="{Checkintime}"
-                                                class="TableContent"
+                                               
                                             />
                                             <m:Text
                                                 id="_IDGenText15"
                                                 text="{Checkouttime}"
-                                                class="TableContent"
+                                               
                                             />
                                         </m:cells>
                                     </m:ColumnListItem>

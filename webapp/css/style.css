@@ -1,7 +1,7 @@
 /* Enter your custom styles here */
 .title {
-    background-color: #aac2e8;
-    background-image: linear-gradient(to bottom, #aac2e8, #ffffff);
+    background-color: #537cbe;
+    background-image: linear-gradient(to bottom, #537cbe, #ffffff);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 .contentWrapper {
@@ -9,7 +9,15 @@
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically if needed */
     height: 100%; /* Full height */
+    
+    background-color: #aac2e8; /* Base color for the gradient */
+    background-image: linear-gradient(to bottom, #aac2e8, #ffffff); /* Gradient from light blue to white */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Adding shadow */
+    padding: 20px; /* Optional: Add padding to ensure content has breathing room */
+    border-radius: 10px; /* Optional: Add rounded corners */
 }
+
+
 
 .smallForm {
     max-width: 500px; /* Adjust as needed */
@@ -23,4 +31,49 @@
     padding: 10px; /* Optional: Add some padding */
     border-radius: 4px; /* Optional: Add rounded corners */
     color: #ba4040; /* Text color to contrast with the background */
+}
+
+
+.blueButton {
+    background-color: rgb(97, 97, 197) !important;
+    color: white !important;
+}
+.blockBackground {
+    background-color: #aac2e8; /* Base color for the gradient */
+    background-image: linear-gradient(to bottom, #aac2e8, #ffffff); /* Gradient from light blue to white */
+   
+  
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Adding shadow */
+}
+
+
+
+
+.labelColor {
+    color: #0c0c0c; /* Dark grey color for the labels */
+}
+
+.inputColor {
+    background-color: #e6f7ff; /* Light blue background for the inputs */
+    border-radius: 5px;
+    border: 1px solid #cccccc; /* Light grey border */
+}
+
+.blueButton {
+    background-color: #007bff; /* Blue color for the Assign button */
+    color: #ffffff;
+    border-radius: 5px;
+    border: none;
+}
+.whiteButton {
+    color: white;
+    background-color: white;
+    border-color: white;
+}
+.TableContent{
+    background-color: #cbd8ee;
+}
+.dialogCustom {
+    background-color: #bd1717; /* Light gray background */
+    color: #333; /* Dark text */
 }

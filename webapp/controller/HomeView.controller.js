@@ -50,11 +50,29 @@ sap.ui.define([
                 // this._setParkingLotModel();
 
             },
-            // onBeforeRendering: function () {
-            //     debugger
-            //     this.updateSoltsStatusbyDate();
+            onBeforeRendering: function () {
+                debugger
+                this.byId("parkingLotSelect").getBinding("items").sort(new sap.ui.model.Sorter("Slotnumbers"));
+                this.updateSoltsStatusbyDate();
+                // count
+                var count = 0;
+                var oModel = this.getView().getModel();
+                var oThis = this;
+                oModel.read("/ZPARKING_RESERVE_SSet", {
+                    success: function (odata) {
+                        // var otemp = odata.results.length;
+                        odata.results.forEach((obj) => {
+                            if (obj.Reservedslot === "") {
+                                count = count + 1
+                            }
+                        })
+                        oThis.getView().byId("idbadghqwe").setValue(count);
 
-            // },
+                    }, error: function (oError) {
+
+                    }
+                })
+            },
             onEditPress: function () {
                 debugger
                 var oTable = this.byId("idAssignedTable");
@@ -77,6 +95,18 @@ sap.ui.define([
 
 
             },
+            statusColorFormatter: function (sStatus) {
+                switch (sStatus) {
+                  case "RESERVED":
+                    return "Warning"; 
+                  case "AVAILABLE":
+                    return "Success"; // Green
+                  case "NOT AVAILABLE":
+                    return "Error"; // Red
+                  default:
+                    return "None"; // Default color
+                }
+              },
             onSavePress: function () {
                 debugger
                 const oThis = this
@@ -229,13 +259,29 @@ sap.ui.define([
 
             },
             onReservationsPress: async function () {
-
-                debugger
+                 // count
+                 var count = 0;
+                 var oModel = this.getView().getModel();
+                 var oThis = this;
+                 oModel.read("/ZPARKING_RESERVE_SSet", {
+                     success: function (odata) {
+                         // var otemp = odata.results.length;
+                         odata.results.forEach((obj) => {
+                             if (obj.Reservedslot === "") {
+                                 count = count + 1
+                             }
+                         })
+                         oThis.getView().byId("idbadghqwe").setValue(count);
+ 
+                     }, error: function (oError) {
+ 
+                     }
+                 })
                 if (!this.Reservationspopup) {
                     this.Reservationspopup = await this.loadFragment("Reservations")
                 }
                 this.Reservationspopup.open()
-
+                oModel.refresh(true)
             },
             onCloseReservations: function () {
                 if (this.Reservationspopup.isOpen()) {
@@ -252,37 +298,79 @@ sap.ui.define([
                 var aFilters = [];
                 var sQuery = oEvent.getSource().getValue();
                 if (sQuery && sQuery.length > 0) {
-                    var filterVehicle = new Filter("vehicleNumber", FilterOperator.Contains, sQuery);
-                    var filterSlot = new Filter("slotNumber/slotNumbers", FilterOperator.Contains, sQuery)
+                    // Filters for each field based on the search query
+                    var filterVehicle = new Filter("Assignedvehiclenumber", FilterOperator.Contains, sQuery);
+                    var filterSlot = new Filter("Slotnumbers", FilterOperator.Contains, sQuery);
+                    var filterName = new Filter("Assigneddrivername", FilterOperator.Contains, sQuery);
+                    var filterMobile = new Filter("Assigneddrivermobile", FilterOperator.Contains, sQuery);
+                    var filterDelivery = new Filter("Assigneddeliverytype", FilterOperator.Contains, sQuery);
+                    var filterVendor = new Filter("VendorName", FilterOperator.Contains, sQuery);
 
-                    var filterName = new Filter("driverName", FilterOperator.Contains, sQuery);
-                    var filterMobile = new Filter("driverMobile", FilterOperator.Contains, sQuery);
-                    var filterDelivery = new Filter("deliveryType", FilterOperator.Contains, sQuery);
-                    var filterVendor = new Filter("vendor_Name", FilterOperator.Contains, sQuery);
+                    // Combine all the above filters with OR condition
+                    var searchFilters = new Filter({
+                        filters: [filterVehicle, filterSlot, filterName, filterMobile, filterDelivery, filterVendor],
+                        and: false
+                    });
 
-                    var allFilter = new Filter([filterVehicle, filterSlot, filterName, filterMobile, filterDelivery, filterVendor]);
+                    // Filter to ensure Assignedvehiclenumber is not empty
+                    var vehicleFilter = new Filter("Assignedvehiclenumber", FilterOperator.NE, "");
+
+                    // Combine search filters with the vehicle filter (AND condition)
+                    var allFilters = new Filter({
+                        filters: [searchFilters, vehicleFilter],
+                        and: true
+                    });
+
+                    aFilters.push(allFilters);
+                } else {
+                    // If no query, just ensure the vehicle number is not empty
+                    aFilters.push(new Filter("Assignedvehiclenumber", FilterOperator.NE, ""));
                 }
 
-                // update list binding
+                // Update list binding with the combined filters
                 var oList = this.byId("idAssignedTable");
                 var oBinding = oList.getBinding("items");
-                oBinding.filter(allFilter);
+                oBinding.filter(aFilters);
 
             },
+            
+            // onSearch: function (oEvent) {
+            //     debugger
+            //     // add filter for search
+            //     var aFilters = [];
+            //     var sQuery = oEvent.getSource().getValue();
+            //     if (sQuery && sQuery.length > 0) {
+            //         var filterVehicle = new Filter("Assignedvehiclenumber", FilterOperator.Contains, sQuery);
+            //         var filterSlot = new Filter("Slotnumbers", FilterOperator.Contains, sQuery)
+
+            //         var filterName = new Filter("Assigneddrivername", FilterOperator.Contains, sQuery);
+            //         var filterMobile = new Filter("Assigneddrivermobile", FilterOperator.Contains, sQuery);
+            //         var filterDelivery = new Filter("Assigneddeliverytype", FilterOperator.Contains, sQuery);
+            //         var filterVendor = new Filter("VendorName", FilterOperator.Contains, sQuery);
+
+            //         var allFilter = new Filter([filterVehicle, filterSlot, filterName, filterMobile, filterDelivery, filterVendor]);
+            //     }
+
+            //     // update list binding
+            //     var oList = this.byId("idAssignedTable");
+            //     var oBinding = oList.getBinding("items");
+            //     oBinding.filter(allFilter);
+
+            // },
             onSearchHistory: function (oEvent) {
                 debugger
                 // add filter for search
                 // var aFilters = [];
                 var sQuery = oEvent.getSource().getValue();
                 if (sQuery && sQuery.length > 0) {
-                    var filterVehicle = new Filter("vehicleNumber", FilterOperator.Contains, sQuery);
-                    var filterSlot = new Filter("historySlotNumber/slotNumbers", FilterOperator.Contains, sQuery);
-                    var filterName = new Filter("driverName", FilterOperator.Contains, sQuery);
-                    var filterMobile = new Filter("driverMobile", FilterOperator.Contains, sQuery);
-                    var filterDelivery = new Filter("deliveryType", FilterOperator.Contains, sQuery);
-                    var filterVendor = new Filter("vendor_Name", FilterOperator.Contains, sQuery);
+                   // var filterVehicle = new Filter("Vehiclenumber", FilterOperator.Contains, sQuery);
+                    // var filterSlot = new Filter("Historyslotnumber", FilterOperator.Contains, sQuery);
+                    var filterName = new Filter("Drivername", FilterOperator.EQ, sQuery);
+                    var filterMobile = new Filter("Drivermobile", FilterOperator.Contains, sQuery);
+                    var filterDelivery = new Filter("Deliverytype", FilterOperator.Contains, sQuery);
+                    var filterVendor = new Filter("VendorName", FilterOperator.Contains, sQuery);
 
-                    var allFilter = new Filter([filterVehicle, filterSlot, filterName, filterMobile, filterDelivery, filterVendor]);
+                    var allFilter = new Filter([filterName, filterMobile, filterDelivery, filterVendor]);
                 }
 
                 // update list binding
@@ -309,11 +397,11 @@ sap.ui.define([
                 var seconds = currentDate.getSeconds();
                 var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`
                 const oUserView = this.getView(),
-                    oDriverName = oUserView.byId("idDriverName").getValue(),
-                    oDriverMobile = oUserView.byId("idDriverMobile").getValue(),
-                    oVehicleNumber = oUserView.byId("idVehicleNUmber").getValue(),
-                    oVendorName = oUserView.byId("idVendorName___").getValue(),
-                    odeliveryType = oUserView.byId("idTypeOfDelivery").getSelectedKey(),
+                oDriverName = oUserView.byId("idDriverName").getValue().toUpperCase(),
+                oDriverMobile = oUserView.byId("idDriverMobile").getValue().toUpperCase(),
+                oVehicleNumber = oUserView.byId("idVehicleNUmber").getValue().toUpperCase(),
+                oVendorName = oUserView.byId("idVendorName___").getValue().toUpperCase(),
+                odeliveryType = oUserView.byId("idTypeOfDelivery").getSelectedKey().toUpperCase(),
                     oslotNumber = oUserView.byId("parkingLotSelect").getSelectedKey(),
                     oCheckInTime = FinalDate
 
@@ -393,13 +481,15 @@ sap.ui.define([
                     oModel.read("/ZPARKING_SLOTS_SSet", {
                         filters: [ofilter],
                         success: async function (oData) {
-                            if (oData.result) {
-                                MessageBox.warning("You can not Assign.A Slot for " + sVehicle + " already assigned")
-                            } else {
+                            if (oData.results.length > 0) {
+                                MessageBox.warning("You can not Assign.A Slot for " + oVehicleNumber + " already assigned")
+                            }
+                        else {
 
                                 oModel.update(`/ZPARKING_SLOTS_SSet('${oslotNumber}')`, newAssignPayload, {
                                     success: async function (oData, oResponse) {
 
+                                        MessageBox.success("Vehicle Assigned successfully")
                                         // success
                                         // Test
 
@@ -467,13 +557,13 @@ sap.ui.define([
                                         makeAnnouncement(`कृपया ध्यान दें। वाहन नंबर ${oVehicleNumber} को स्लॉट नंबर ${sSlotNumber} द्वारा आवंटित किया गया है।`, 'hi-IN');
                                         // makeAnnouncement(`దయచేసి వినండి. వాహనం నంబర్ ${oVehicleNumber} కు స్లాట్ నంబర్ ${sSlotNumber} కేటాయించబడింది.`, 'te-IN');
 
-                                        // Lorry Animation
-                                        var oImage = oThis.byId("movingImage");
-                                        oImage.setVisible(true);
-                                        oImage.addStyleClass("animate");
-                                        setTimeout(function () {
-                                            oImage.setVisible(false);
-                                        }, 7000);
+                                        // // Lorry Animation
+                                        // var oImage = oThis.byId("movingImage");
+                                        // oImage.setVisible(true);
+                                        // oImage.addStyleClass("animate");
+                                        // setTimeout(function () {
+                                        //     oImage.setVisible(false);
+                                        // }, 7000);
 
                                         // open receipt    
                                         // test
@@ -522,41 +612,62 @@ sap.ui.define([
                     this.ReceiptDailog.close()
                 }
             },
-            onUnassignPress: function (oEvent) {
-                debugger;
-                const oThis = this
-                const oModel = this.getView().getModel()
-                var oSelected = this.byId("idAssignedTable").getSelectedItem();
+            onUnassignPress: async function (oEvent) {
+                debugger
+                const oSelected = this.byId("idAssignedTable").getSelectedItem();
+                if (oSelected) {
+                    // Load the dialog fragment if it hasn't been loaded yet
+                    if (!this.oConfirmDeleteDialog) {
+                        this.oConfirmDeleteDialog = await this.loadFragment("UnassignConfirmation")
+                           
+                        
+                    }
+                    this.oConfirmDeleteDialog.open()
+
+                   
+                    // Store the selected item context for later use in confirmation
+                    this._oSelectedItem = oSelected;
+            
+                    // Open the confirmation dialog
+                    this.oConfirmDeleteDialog.open();
+                } else {
+                    sap.m.MessageBox.information("Please select a record");
+                }
+            },
+            onConfirmUnassign: function () {
+                const oModel = this.getView().getModel();
+                const oSelected = this._oSelectedItem; // Retrieve the stored selected item
+            
+                // Proceed with unassign logic
                 if (oSelected) {
                     var sVehicle = oSelected.getBindingContext().getObject().Assignedvehiclenumber;
                     var sSlotNumber = oSelected.getBindingContext().getObject().Slotnumbers;
-                    var sDriverName = oSelected.getBindingContext().getObject().Assigneddrivername
-                    var sTypeofDelivery = oSelected.getBindingContext().getObject().Deliverytype
-                    var sDriverMobile = oSelected.getBindingContext().getObject().Assigneddrivermobile
-                    var dCheckInTime = oSelected.getBindingContext().getObject().Assignedcheckintime
-                    // var oSlotId = oSelected.getBindingContext().getObject().slotNumber_ID
-                    var oVendorName = oSelected.getBindingContext().getObject().VendorName
+                    var sDriverName = oSelected.getBindingContext().getObject().Assigneddrivername;
+                    var sTypeofDelivery = oSelected.getBindingContext().getObject().Deliverytype;
+                    var sDriverMobile = oSelected.getBindingContext().getObject().Assigneddrivermobile;
+                    var dCheckInTime = oSelected.getBindingContext().getObject().Assignedcheckintime;
+                    var oVendorName = oSelected.getBindingContext().getObject().VendorName;
+                    
                     var currentDate = new Date();
                     var year = currentDate.getFullYear();
-                    var month = currentDate.getMonth() + 1; // Months are zero-based
+                    var month = currentDate.getMonth() + 1;
                     var day = currentDate.getDate();
                     var hours = currentDate.getHours();
                     var minutes = currentDate.getMinutes();
                     var seconds = currentDate.getSeconds();
-                    var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`
-                    var oCheckOutTime = FinalDate
-
+                    var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`;
+                    var oCheckOutTime = FinalDate;
+            
                     // UUID generation
                     function generateUUID() {
-                        // Generate random values and place them in the UUID format
                         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                             return v.toString(16);
                         });
                     }
                     const NewUuid = generateUUID();
-
-                    // update the slot data
+            
+                    // Update the slot data
                     const oUpdatedSlotPayload = {
                         Status: "AVAILABLE",
                         Assigneddrivername: "",
@@ -565,9 +676,9 @@ sap.ui.define([
                         Assigneddeliverytype: "",
                         VendorName: "",
                         Assignedcheckintime: ""
-                    }
-
-                    // create a record in history
+                    };
+            
+                    // Create a record in history
                     const oNewHistoryPayload = {
                         Uuid: NewUuid,
                         Drivername: sDriverName,
@@ -578,170 +689,259 @@ sap.ui.define([
                         Historyslotnumber: sSlotNumber,
                         VendorName: oVendorName,
                         Checkouttime: oCheckOutTime
-                    }
-
+                    };
+            
                     oModel.update(`/ZPARKING_SLOTS_SSet('${sSlotNumber}')`, oUpdatedSlotPayload, {
                         success: async function (oData, oResponse) {
-
-                            // Unassign SMS
-
-                            const accountSid = Config.twilio.accountSid;
-                            const authToken = Config.twilio.authToken;
-
-                            // debugger
-                            const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
-                            const fromNumber = '+15856485867'; // Replace with your Twilio phone number
-                            const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
-
-                            // Twilio API endpoint for sending messages
-                            const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-
-
-                            // Send POST request to Twilio API using jQuery.ajax
-                            $.ajax({
-                                url: url,
-                                type: 'POST',
-                                headers: {
-                                    'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
-                                },
-                                data: {
-                                    To: toNumber,
-                                    From: fromNumber,
-                                    Body: messageBody
-                                },
-                                success: function (data) {
-                                    console.log('SMS sent successfully:', data);
-                                    // Handle success, e.g., show a success message
-                                    sap.m.MessageToast.show('SMS sent successfully!');
-                                },
-                                error: function (error) {
-                                    console.error('Error sending SMS:', error);
-                                    // Handle error, e.g., show an error message
-                                    sap.m.MessageToast.show('Failed to send SMS: ' + error);
-                                }
-                            });
-
-                            // SMS END
-
-                            var oImage = oThis.byId("movingImage2");
-                            oImage.setVisible(true);
-                            oImage.addStyleClass("animate");
-                            setTimeout(function () {
-                                oImage.setVisible(false);
-                            }, 7000);
-
-                            // CREATE history
+                            // Handle Twilio SMS and other logic as before
+            
                             oModel.create("/ZPARKING_HISTORYSet", oNewHistoryPayload, {
                                 success: function (oData, oResponse) {
-
+                                    // Handle success
                                 },
                                 error: function (error) {
-                                    MessageToast.show("Error" + error.message)
+                                    sap.m.MessageToast.show("Error: " + error.message);
                                 }
-                            })
-
-                            oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
-                            MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
-
-
-                        },
+                            });
+            
+                            sap.m.MessageToast.show("Vehicle " + sVehicle + " Unassigned Successfully");
+                            this.getView().byId("idHistoryTable").getBinding("items").refresh();
+                        }.bind(this),
                         error: function (err) {
+                            sap.m.MessageToast.show("Error: " + err.message);
                         }
-                    })
-
-
-
-
-                    // const oBindlist = oModel.bindList("/history")
-
-                    // oSelected.getBindingContext().delete("$auto").then(function () {
-
-                    //     // Add sms code here
-
-                    //     // Unassign SMS
-
-                    //     const accountSid = Config.twilio.accountSid;
-                    //     const authToken = Config.twilio.authToken;
-
-                    //     // debugger
-                    //     const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
-                    //     const fromNumber = '+15856485867'; // Replace with your Twilio phone number
-                    //     const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
-
-                    //     // Twilio API endpoint for sending messages
-                    //     const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-
-
-                    //     // Send POST request to Twilio API using jQuery.ajax
-                    //     $.ajax({
-                    //         url: url,
-                    //         type: 'POST',
-                    //         headers: {
-                    //             'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
-                    //         },
-                    //         data: {
-                    //             To: toNumber,
-                    //             From: fromNumber,
-                    //             Body: messageBody
-                    //         },
-                    //         success: function (data) {
-                    //             console.log('SMS sent successfully:', data);
-                    //             // Handle success, e.g., show a success message
-                    //             sap.m.MessageToast.show('SMS sent successfully!');
-                    //         },
-                    //         error: function (error) {
-                    //             console.error('Error sending SMS:', error);
-                    //             // Handle error, e.g., show an error message
-                    //             sap.m.MessageToast.show('Failed to send SMS: ' + error);
-                    //         }
-                    //     });
-
-                    //     // SMS END
-
-                    //     var oImage = oThis.byId("movingImage2");
-                    //     oImage.setVisible(true);
-                    //     oImage.addStyleClass("animate");
-                    //     setTimeout(function () {
-                    //         oImage.setVisible(false);
-                    //     }, 7000);
-
-                    //     oBindlist.create(oNewHistory)
-                    //     oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
-                    //     var oParkingSlotBinding = oModel.bindList("/parkingSlots");
-
-                    //     oParkingSlotBinding.filter([
-                    //         new Filter("slotNumbers", FilterOperator.EQ, sSlotNumber)
-                    //     ]);
-
-                    //     oParkingSlotBinding.requestContexts().then(function (aParkingContexts) {
-                    //         if (aParkingContexts.length > 0) {
-                    //             var oParkingContext = aParkingContexts[0];
-                    //             var oParkingData = oParkingContext.getObject();
-                    //             // Update 
-                    //             oParkingData.status = "Available"
-                    //             oParkingContext.setProperty("status", oParkingData.status);
-                    //             oModel.submitBatch("updateGroup");
-                    //             oThis.getView().byId("idAllSlots").getBinding("items").refresh();
-                    //             oModel.refresh(); // Refresh the model to get the latest 
-
-
-                    //         } else {
-                    //             MessageToast.show("Something went wrong")
-                    //         }
-                    //     })
-
-                    //     MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
-
-                    // },
-                    //     function (oError) {
-                    //         MessageToast.show("Technical Issue Cannot Unassign", oError);
-                    //     });
-                    // this.getView().byId("idAssignedTable").getBinding("items").refresh();
-
-                } else {
-                    MessageToast.show("Please Select a record");
+                    });
+            
+                    // Close the dialog after unassign
+                    this.oConfirmDeleteDialog.close();
                 }
             },
+            
+            onCancelUnassign: function () {
+                // Close the dialog without taking any action
+                this.oConfirmDeleteDialog.close();
+            },
+            
+            // onUnassignPress: function (oEvent) {
+            //     debugger;
+            //     const oThis = this
+            //     const oModel = this.getView().getModel()
+            //     var oSelected = this.byId("idAssignedTable").getSelectedItem();
+            //     if (oSelected) {
+            //         var sVehicle = oSelected.getBindingContext().getObject().Assignedvehiclenumber;
+            //         var sSlotNumber = oSelected.getBindingContext().getObject().Slotnumbers;
+            //         var sDriverName = oSelected.getBindingContext().getObject().Assigneddrivername
+            //         var sTypeofDelivery = oSelected.getBindingContext().getObject().Deliverytype
+            //         var sDriverMobile = oSelected.getBindingContext().getObject().Assigneddrivermobile
+            //         var dCheckInTime = oSelected.getBindingContext().getObject().Assignedcheckintime
+            //         // var oSlotId = oSelected.getBindingContext().getObject().slotNumber_ID
+            //         var oVendorName = oSelected.getBindingContext().getObject().VendorName
+            //         var currentDate = new Date();
+            //         var year = currentDate.getFullYear();
+            //         var month = currentDate.getMonth() + 1; // Months are zero-based
+            //         var day = currentDate.getDate();
+            //         var hours = currentDate.getHours();
+            //         var minutes = currentDate.getMinutes();
+            //         var seconds = currentDate.getSeconds();
+            //         var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`
+            //         var oCheckOutTime = FinalDate
+
+            //         // UUID generation
+            //         function generateUUID() {
+            //             // Generate random values and place them in the UUID format
+            //             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            //                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            //                 return v.toString(16);
+            //             });
+            //         }
+            //         const NewUuid = generateUUID();
+
+            //         // update the slot data
+            //         const oUpdatedSlotPayload = {
+            //             Status: "AVAILABLE",
+            //             Assigneddrivername: "",
+            //             Assigneddrivermobile: "",
+            //             Assignedvehiclenumber: "",
+            //             Assigneddeliverytype: "",
+            //             VendorName: "",
+            //             Assignedcheckintime: ""
+            //         }
+
+            //         // create a record in history
+            //         const oNewHistoryPayload = {
+            //             Uuid: NewUuid,
+            //             Drivername: sDriverName,
+            //             Drivermobile: sDriverMobile,
+            //             Vehiclenumber: sVehicle,
+            //             Deliverytype: sTypeofDelivery,
+            //             Checkintime: dCheckInTime,
+            //             Historyslotnumber: sSlotNumber,
+            //             VendorName: oVendorName,
+            //             Checkouttime: oCheckOutTime
+            //         }
+
+            //         oModel.update(`/ZPARKING_SLOTS_SSet('${sSlotNumber}')`, oUpdatedSlotPayload, {
+            //             success: async function (oData, oResponse) {
+
+            //                 // Unassign SMS
+
+            //                 const accountSid = Config.twilio.accountSid;
+            //                 const authToken = Config.twilio.authToken;
+
+            //                 // debugger
+            //                 const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
+            //                 const fromNumber = '+15856485867'; // Replace with your Twilio phone number
+            //                 const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
+
+            //                 // Twilio API endpoint for sending messages
+            //                 const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+
+            //                 // Send POST request to Twilio API using jQuery.ajax
+            //                 $.ajax({
+            //                     url: url,
+            //                     type: 'POST',
+            //                     headers: {
+            //                         'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+            //                     },
+            //                     data: {
+            //                         To: toNumber,
+            //                         From: fromNumber,
+            //                         Body: messageBody
+            //                     },
+            //                     success: function (data) {
+            //                         console.log('SMS sent successfully:', data);
+            //                         // Handle success, e.g., show a success message
+            //                         sap.m.MessageToast.show('SMS sent successfully!');
+            //                     },
+            //                     error: function (error) {
+            //                         console.error('Error sending SMS:', error);
+            //                         // Handle error, e.g., show an error message
+            //                         sap.m.MessageToast.show('Failed to send SMS: ' + error);
+            //                     }
+            //                 });
+
+            //                 // SMS END
+
+            //                 var oImage = oThis.byId("movingImage2");
+            //                 oImage.setVisible(true);
+            //                 oImage.addStyleClass("animate");
+            //                 setTimeout(function () {
+            //                     oImage.setVisible(false);
+            //                 }, 7000);
+
+            //                 // CREATE history
+            //                 oModel.create("/ZPARKING_HISTORYSet", oNewHistoryPayload, {
+            //                     success: function (oData, oResponse) {
+
+            //                     },
+            //                     error: function (error) {
+            //                         MessageToast.show("Error" + error.message)
+            //                     }
+            //                 })
+
+            //                 oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
+            //                 MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
+
+
+            //             },
+            //             error: function (err) {
+            //             }
+            //         })
+
+
+
+
+            //         // const oBindlist = oModel.bindList("/history")
+
+            //         // oSelected.getBindingContext().delete("$auto").then(function () {
+
+            //         //     // Add sms code here
+
+            //         //     // Unassign SMS
+
+            //         //     const accountSid = Config.twilio.accountSid;
+            //         //     const authToken = Config.twilio.authToken;
+
+            //         //     // debugger
+            //         //     const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
+            //         //     const fromNumber = '+15856485867'; // Replace with your Twilio phone number
+            //         //     const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
+
+            //         //     // Twilio API endpoint for sending messages
+            //         //     const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+
+            //         //     // Send POST request to Twilio API using jQuery.ajax
+            //         //     $.ajax({
+            //         //         url: url,
+            //         //         type: 'POST',
+            //         //         headers: {
+            //         //             'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+            //         //         },
+            //         //         data: {
+            //         //             To: toNumber,
+            //         //             From: fromNumber,
+            //         //             Body: messageBody
+            //         //         },
+            //         //         success: function (data) {
+            //         //             console.log('SMS sent successfully:', data);
+            //         //             // Handle success, e.g., show a success message
+            //         //             sap.m.MessageToast.show('SMS sent successfully!');
+            //         //         },
+            //         //         error: function (error) {
+            //         //             console.error('Error sending SMS:', error);
+            //         //             // Handle error, e.g., show an error message
+            //         //             sap.m.MessageToast.show('Failed to send SMS: ' + error);
+            //         //         }
+            //         //     });
+
+            //         //     // SMS END
+
+            //         //     var oImage = oThis.byId("movingImage2");
+            //         //     oImage.setVisible(true);
+            //         //     oImage.addStyleClass("animate");
+            //         //     setTimeout(function () {
+            //         //         oImage.setVisible(false);
+            //         //     }, 7000);
+
+            //         //     oBindlist.create(oNewHistory)
+            //         //     oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
+            //         //     var oParkingSlotBinding = oModel.bindList("/parkingSlots");
+
+            //         //     oParkingSlotBinding.filter([
+            //         //         new Filter("slotNumbers", FilterOperator.EQ, sSlotNumber)
+            //         //     ]);
+
+            //         //     oParkingSlotBinding.requestContexts().then(function (aParkingContexts) {
+            //         //         if (aParkingContexts.length > 0) {
+            //         //             var oParkingContext = aParkingContexts[0];
+            //         //             var oParkingData = oParkingContext.getObject();
+            //         //             // Update 
+            //         //             oParkingData.status = "Available"
+            //         //             oParkingContext.setProperty("status", oParkingData.status);
+            //         //             oModel.submitBatch("updateGroup");
+            //         //             oThis.getView().byId("idAllSlots").getBinding("items").refresh();
+            //         //             oModel.refresh(); // Refresh the model to get the latest 
+
+
+            //         //         } else {
+            //         //             MessageToast.show("Something went wrong")
+            //         //         }
+            //         //     })
+
+            //         //     MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
+
+            //         // },
+            //         //     function (oError) {
+            //         //         MessageToast.show("Technical Issue Cannot Unassign", oError);
+            //         //     });
+            //         // this.getView().byId("idAssignedTable").getBinding("items").refresh();
+
+            //     } else {
+            //         MessageToast.show("Please Select a record");
+            //     }
+            // },
             onConfirmReservePress: async function () {
                 debugger
                 if (!this.confirmDialog) {
@@ -796,7 +996,7 @@ sap.ui.define([
                 let month = String(currentDate.getMonth() + 1).padStart(2, '0');
                 let day = String(currentDate.getDate()).padStart(2, '0');
                 const currentDay = `${year}-${month}-${day}`
-
+ 
                 const oThis = this
                 const oDriverName = this.getView().byId("_IDGendfgdInput1").getValue(),
                     oDriverMobile = this.getView().byId("_IDGexgrgnInput2").getValue(),
@@ -805,20 +1005,20 @@ sap.ui.define([
                     // oDeliveryType = this.getView().byId("_IDGewertnSelect1").getSelectedKey(),
                     oReservedSlot = this.getView().byId("idSlotReserve").getSelectedKey(),
                     oBookedDate = this.getView().byId("idDatePicker").getValue()
-
-
-
+ 
+ 
+ 
                 var oSelect = this.byId("idSlotReserve");
                 var oSelectedItem = oSelect.getSelectedItem();
-
+ 
                 if (oSelectedItem) {
                     var sSlotNumber = oSelectedItem.getText();
-
+ 
                 }
                 const selectedRecordId = this.getView().byId("idReservationsTable").getSelectedItem().getBindingContext().getObject().Uuid
-
+ 
                 const NewReservedRecord = {
-
+ 
                     Drivername: oDriverName,
                     Drivermobile: oDriverMobile,
                     Vehiclenumber: oVehicleNumber,
@@ -826,11 +1026,11 @@ sap.ui.define([
                     // deliveryType: oDeliveryType,
                     Reservedslot: oReservedSlot,
                     Reserveddate: oBookedDate
-
+ 
                 }
                 const oModel = this.getView().getModel(),
                     oUserView = this.getView()
-
+ 
                 var bValid = true;
                 if (!oDriverName || oDriverName.length < 3) {
                     oUserView.byId("_IDGendfgdInput1").setValueState("Error");
@@ -842,7 +1042,7 @@ sap.ui.define([
                 if (!oDriverMobile || oDriverMobile.length !== 10 || !/^\d+$/.test(oDriverMobile)) {
                     oUserView.byId("_IDGexgrgnInput2").setValueState("Error");
                     oUserView.byId("_IDGexgrgnInput2").setValueStateText("Mobile number must be a 10-digit numeric value");
-
+ 
                     bValid = false;
                 } else {
                     oUserView.byId("_IDGexgrgnInput2").setValueState("None");
@@ -850,7 +1050,7 @@ sap.ui.define([
                 if (!oVehicleNumber || !/^[A-Za-z]{2}\d{2}[A-Za-z]{2}\d{4}$/.test(oVehicleNumber)) {
                     oUserView.byId("idasgredhmeInput").setValueState("Error");
                     oUserView.byId("idasgredhmeInput").setValueStateText("Vehicle number should follow this pattern AP12BG1234");
-
+ 
                     bValid = false;
                 } else {
                     oUserView.byId("idasgredhmeInput").setValueState("None");
@@ -869,26 +1069,58 @@ sap.ui.define([
                 } else {
                     oUserView.byId("idDatePicker").setValueState("None");
                 }
-
+ 
                 if (!bValid) {
                     MessageToast.show("Please enter correct data");
                     return; // Prevent further execution
-
+ 
                 }
-
+ 
                 const oFilters = new Filter("Reserveddate", FilterOperator.EQ, oBookedDate)
                 const oFilter2 = new Filter("Reservedslot", FilterOperator.EQ, oReservedSlot)
+                const ofilter3 = new Filter("Status", FilterOperator.NE, "AVAILABLE")
+                const oFilter4 = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
+ 
+ 
+                if (oBookedDate === currentDay) {
+                    oModel.read("/ZPARKING_SLOTS_SSet", {
+                        filters: [oFilter4, ofilter3],
+                        success: function (oData) {
+                            if (oData.results.length > 0) {
+                                MessageBox.information("Selected slot not available Today")
+                            }
+                        },
+                        error: function () {
+                        }
+                    })
+                }else{
 
+                    oModel.read("/ZPARKING_RESERVE_SSet", {
+                        filters: [oFilters, oFilter2],
+                        success: async function (oData, oResponse) {
+                            if (oData.results.length > 0) {
+                                MessageBox.information("A slot not available on selected date")
+                            } else {
+                                oModel.update(`/ZPARKING_RESERVE_SSet('${selectedRecordId}')`, NewReservedRecord, {
+                                    success: async function (oData, oResponse) {
+ 
+                                    /// count
+                                    var count = 0;
+                                    var oModel = oThis.getView().getModel();
+                                    oModel.read("/ZPARKING_RESERVE_SSet", {
+                                        success: function (odata) {
+                                            // var otemp = odata.results.length;
+                                            odata.results.forEach((obj) => {
+                                                if (obj.Reservedslot === "") {
+                                                    count = count + 1
+                                                }
+                                            })
+                                            oThis.getView().byId("idbadghqwe").setValue(count);
+                                        }, error: function (oError) {
 
-                oModel.read("/ZPARKING_RESERVE_SSet", {
-                    filters: [oFilters, oFilter2],
-                    success: async function (oData, oResponse) {
-                        if (!oData.results) {
-                            MessageBox.information("A slot not available on selected date")
-                        } else {
-                            oModel.update(`/ZPARKING_RESERVE_SSet('${selectedRecordId}')`, NewReservedRecord, {
-                                success: async function (oData, oResponse) {
-
+                                        }
+                                    })
+ 
                                     const accountSid = Config.twilio.accountSid;
                                     const authToken = Config.twilio.authToken;
 
@@ -925,47 +1157,47 @@ sap.ui.define([
 
                                     // SMS END
                                     // var oSelected = oThis.byId("idReservationsTable").getSelectedItem();
-
+ 
                                     oThis.byId("_IDGendfgdInput1").setValue("")
                                     oThis.byId("_IDGexgrgnInput2").setValue("")
                                     oThis.byId("idasgredhmeInput").setValue("")
                                     //  this.byId("_IDGewertnSelect1").setValue(oDeliveryType)
                                     oThis.byId("idasgredhmeIn0075put").setValue("")
                                     oThis.confirmDialog.close()
-
-
-                                    // update the slot acc to date 
-
+ 
+ 
+                                    // update the slot acc to date
+ 
                                     const filter = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
                                     oModel.read("/ZPARKING_SLOTS_SSet", {
                                         filters: [filter],
                                         success: function (oData, resp) {
                                             if (oBookedDate === currentDay) {
                                                 oModel.update(`/ZPARKING_SLOTS_SSet('${oReservedSlot}')`, { Status: "RESERVED" })
-
+ 
                                             }
-
+ 
                                         },
                                         error: function (err) {
                                             MessageToast.show("Failed to read slots")
                                         }
                                     })
-
+ 
                                 },
                                 error: async function (err) {
                                     MessageToast.show("Failed to read slots")
                                 }
                             })
-
+ 
                         }
                     },
                     error: async function (err) {
                         MessageToast.show("Failed to read slots")
-
+ 
                     }
                 })
             },
-            onDeleteReservedPressToConfirm: async function () {
+            onDeleteReservedPressToCoitenfirm: async function () {
                 const oSelected = this.getView().byId("idReservedTable__").getSelectedItem()
                 if (oSelected) {
                     if (!this.ConfirmDeleteDialog) {
@@ -1079,45 +1311,34 @@ sap.ui.define([
                     MessageToast.show("Model is not defined");
                     return;
                 }
+                oModel.read("/ZPARKING_RESERVE_SSet", {
+                    success: function (oData, resp) {
+                        if (oData.results.length > 0) {
+                            MessageBox.information("Hey you have reservation requests")
+                            oData.results.forEach((element) => {
+                                var oReservedDate = element.Reserveddate
+                                if (oReservedDate === currentDay) {
+                                    var oReservedSlot = element.Reservedslot
+                                    const ofilter = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
+                                    oModel.update(`/ZPARKING_SLOTS_SSet('${oReservedSlot}')`,{Status:"RESERVED"},{
+                                        success:function(){
 
-                var oreservedSlotBinding = oModel.bindList("/reserved");
+                                        },
+                                        error:function(){
+                                            MessageBox.show("Failed to update")
+                                        }
+                                    })
+                                }
+                            })
 
-                oreservedSlotBinding.requestContexts().then(function (areservedContexts) {
-                    debugger
-                    if (areservedContexts.length > 0) {
-                        areservedContexts.forEach((element) => {
-                            var oReservedDate = element.getObject().reservedDate
-                            if (oReservedDate === currentDay) {
-                                var oReservedSlot = element.getObject().reservedSlot_ID
-                                // update slot Status
-                                var oreservedSlotBinding = oModel.bindList("/parkingSlots");
-
-                                oreservedSlotBinding.filter([
-                                    new Filter("ID", FilterOperator.EQ, oReservedSlot)
-                                ]);
-
-                                oreservedSlotBinding.requestContexts().then(function (aParkingContexts) {
-                                    if (aParkingContexts.length > 0) {
-                                        var oParkingContext = aParkingContexts[0];
-                                        var oParkingData = oParkingContext.getObject();
-                                        // Update 
-                                        oParkingData.status = "Reserved"
-                                        oParkingContext.setProperty("status", oParkingData.status);
-                                        oModel.submitBatch("updateGroup");
-                                        oThis.getView().byId("idAllSlots").getBinding("items").refresh();
-                                        MessageToast.show("Refresh Successful")
-                                    }
-                                })
-                            }
-                        });
-
-                        this.getView().byId("idAllSlots").getBinding("items").refresh();
-                    } else {
-                        MessageBox.information("No reserved slots found today");
+                        }else{
+                            MessageBox.information("No Reservations found today")
+                        }
+                    },
+                    error: function () {
+                        MessageToast.show("Error while reading reserved records")
                     }
-                }.bind(this)).catch(function (error) {
-                    MessageToast.show("Error while fetching parking slots: " + error.message);
-                });
+                })
             },
             onAssignfromReservations: async function () {
                 debugger
@@ -1314,13 +1535,13 @@ sap.ui.define([
                             makeAnnouncement(`कृपया ध्यान दें। वाहन नंबर ${oVehicleNumber} को स्लॉट नंबर ${oslotNumber} द्वारा आवंटित किया गया है।`, 'hi-IN');
                             // makeAnnouncement(`దయచేసి వినండి. వాహనం నంబర్ ${oVehicleNumber} కు స్లాట్ నంబర్ ${sSlotNumber} కేటాయించబడింది.`, 'te-IN');
 
-                            // Lorry Animation
-                            var oImage = oThis.byId("movingImage");
-                            oImage.setVisible(true);
-                            oImage.addStyleClass("animate");
-                            setTimeout(function () {
-                                oImage.setVisible(false);
-                            }, 7000);
+                            // // Lorry Animation
+                            // var oImage = oThis.byId("movingImage");
+                            // oImage.setVisible(true);
+                            // oImage.addStyleClass("animate");
+                            // setTimeout(function () {
+                            //     oImage.setVisible(false);
+                            // }, 7000);
 
 
                             // open receipt    
@@ -1369,6 +1590,7 @@ sap.ui.define([
                 }
 
             },
+            
             onRejectPress: async function () {
                 const oSelected = this.getView().byId("idReservationsTable").getSelectedItem()
 
@@ -1476,17 +1698,17 @@ sap.ui.define([
                         var aChartData = {
                             Items: [
                                 {
-                                    status: `Available-${availableCount}`,
+                                    Status: `Available-${availableCount}`,
                                     Count: availableCount,
                                 },
                                 {
-                                    status: `Not Available-${occupiedCount}`,
+                                    Status: `Not Available-${occupiedCount}`,
                                     Count: occupiedCount,
 
 
                                 },
                                 {
-                                    status: `Reserved-${reservedCount}`,
+                                    Status: `Reserved-${reservedCount}`,
                                     Count: reservedCount,
 
                                 }
@@ -1585,6 +1807,7 @@ sap.ui.define([
                 }
             },
             onPrint: function () {
+                debugger
                 var oView = this.getView();
                 var oElement = oView.byId("idSimpleForm");
 
@@ -1722,13 +1945,13 @@ sap.ui.define([
                                         oModel.update(`/ZPARKING_SLOTS_SSet('${scannedText}')`, oUpdatedSlotPayload, {
                                             success: async function (oData, oResponse) {
 
-                                                // vehicle out
-                                                var oImage = oThis.byId("movingImage2");
-                                                oImage.setVisible(true);
-                                                oImage.addStyleClass("animate");
-                                                setTimeout(function () {
-                                                    oImage.setVisible(false);
-                                                }, 7000);
+                                                // // vehicle out
+                                                // var oImage = oThis.byId("movingImage2");
+                                                // oImage.setVisible(true);
+                                                // oImage.addStyleClass("animate");
+                                                // setTimeout(function () {
+                                                //     oImage.setVisible(false);
+                                                // }, 7000);
 
                                                 // CREATE history
                                                 oModel.create("/ZPARKING_HISTORYSet", oNewHistoryPayload, {
@@ -1741,7 +1964,7 @@ sap.ui.define([
                                                 })
 
                                                 oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
-                                                MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
+                                                MessageToast.show("Vechicle Unassigned Successfully");
 
 
                                             },

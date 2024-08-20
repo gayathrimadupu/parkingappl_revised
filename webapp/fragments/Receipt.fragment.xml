@@ -6,11 +6,12 @@
 >
     <Dialog
         id="idprintparking"
-        title="Print Receipt"
+        title="YOUR PARKING INFORMATION!!!"
         resizable="true"
         draggable="true"
         contentWidth="60%"
         contentHeight="60%"
+         class="dialogCustom"
     >
         <content>
             <f:SimpleForm
@@ -25,9 +26,9 @@
                             class="logoBarcode"
                             src="./images/barcode.png"
                         /> -->
-
+ 
                     <VBox id="Id45tghjuyt_">
-                    <Title id="idreceiptTitle" text="Parking Pass"/>
+                    <Title id="idreceiptTitle" text="Print Receipt"/>
                         <Text
                             id="__iuygbvfres"
                             text="Barcode:"
@@ -61,7 +62,7 @@
                         text=""
                         id="textprint2"
                     />
-
+ 
                     <Label
                         text="Driver Phone Number"
                         class="bold-red-label"
@@ -72,7 +73,7 @@
                         text=""
                         id="textprint3"
                     />
-
+ 
                     <Label
                         text="Delivery Type"
                         width="120px"
@@ -82,21 +83,23 @@
                         text=""
                         id="textprint4"
                     />
-                    <VBox
-                        id="_iuytgjIS"
-                        class="receiptlogovbox"
-                    >
-                        <Image
+                    
+                        <!-- <Image
                             id="idnbgfdfg"
                             class="logoReceipt"
                             src="./images/Vishal-MegaMart.png"
                         />
-
+  -->
+  <Label
+                       
+                        width="120px"
+                        id="labelprint6"
+                    />
                         <Text
                             text=""
                             id="dfvtextprint1"
                         />
-                    </VBox>
+                    
                 </f:content>
             </f:SimpleForm>
         </content>
