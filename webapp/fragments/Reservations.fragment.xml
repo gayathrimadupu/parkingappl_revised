@@ -9,7 +9,7 @@
         draggable="true"
         contentWidth="85%"
         contentHeight="85%"
-        title="Reservations"
+        title="Reservation Requests"
         class="dialogSlideIn"
     >
         <content>

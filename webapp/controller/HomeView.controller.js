@@ -608,153 +608,63 @@ sap.ui.define([
                     this.ReceiptDailog.close()
                 }
             },
-            onUnassignPress: async function (oEvent) {
-                debugger
-                const oSelected = this.byId("idAssignedTable").getSelectedItem();
-                if (oSelected) {
-                    // Load the dialog fragment if it hasn't been loaded yet
-                    if (!this.oConfirmDeleteDialog) {
-                        this.oConfirmDeleteDialog = await this.loadFragment("UnassignConfirmation")
+            // onUnassignPress: async function (oEvent) {
+            //     debugger
+            //     const oSelected = this.byId("idAssignedTable").getSelectedItem();
+            //     if (oSelected) {
+            //         // Load the dialog fragment if it hasn't been loaded yet
+            //         if (!this.oConfirmDeleteDialog) {
+            //             this.oConfirmDeleteDialog = await this.loadFragment("UnassignConfirmation")
                            
                         
-                    }
-                    this.oConfirmDeleteDialog.open()
+            //         }
+            //         this.oConfirmDeleteDialog.open()
 
                    
-                    // Store the selected item context for later use in confirmation
-                    this._oSelectedItem = oSelected;
+            //         // Store the selected item context for later use in confirmation
+            //         this._oSelectedItem = oSelected;
             
-                    // Open the confirmation dialog
-                    this.oConfirmDeleteDialog.open();
-                } else {
-                    sap.m.MessageBox.information("Please select a record");
-                }
-            },
-            onConfirmUnassign: function () {
-                const oModel = this.getView().getModel();
-                const oSelected = this._oSelectedItem; // Retrieve the stored selected item
-            
-                // Proceed with unassign logic
-                if (oSelected) {
-                    var sVehicle = oSelected.getBindingContext().getObject().Assignedvehiclenumber;
-                    var sSlotNumber = oSelected.getBindingContext().getObject().Slotnumbers;
-                    var sDriverName = oSelected.getBindingContext().getObject().Assigneddrivername;
-                    var sTypeofDelivery = oSelected.getBindingContext().getObject().Deliverytype;
-                    var sDriverMobile = oSelected.getBindingContext().getObject().Assigneddrivermobile;
-                    var dCheckInTime = oSelected.getBindingContext().getObject().Assignedcheckintime;
-                    var oVendorName = oSelected.getBindingContext().getObject().VendorName;
-                    
-                    var currentDate = new Date();
-                    var year = currentDate.getFullYear();
-                    var month = currentDate.getMonth() + 1;
-                    var day = currentDate.getDate();
-                    var hours = currentDate.getHours();
-                    var minutes = currentDate.getMinutes();
-                    var seconds = currentDate.getSeconds();
-                    var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`;
-                    var oCheckOutTime = FinalDate;
-            
-                    // UUID generation
-                    function generateUUID() {
-                        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                            return v.toString(16);
-                        });
-                    }
-                    const NewUuid = generateUUID();
-            
-                    // Update the slot data
-                    const oUpdatedSlotPayload = {
-                        Status: "AVAILABLE",
-                        Assigneddrivername: "",
-                        Assigneddrivermobile: "",
-                        Assignedvehiclenumber: "",
-                        Assigneddeliverytype: "",
-                        VendorName: "",
-                        Assignedcheckintime: ""
-                    };
-            
-                    // Create a record in history
-                    const oNewHistoryPayload = {
-                        Uuid: NewUuid,
-                        Drivername: sDriverName,
-                        Drivermobile: sDriverMobile,
-                        Vehiclenumber: sVehicle,
-                        Deliverytype: sTypeofDelivery,
-                        Checkintime: dCheckInTime,
-                        Historyslotnumber: sSlotNumber,
-                        VendorName: oVendorName,
-                        Checkouttime: oCheckOutTime
-                    };
-            
-                    oModel.update(`/ZPARKING_SLOTS_SSet('${sSlotNumber}')`, oUpdatedSlotPayload, {
-                        success: async function (oData, oResponse) {
-                            oModel.refresh(true)
-                            // Handle Twilio SMS and other logic as before
-            
-                            oModel.create("/ZPARKING_HISTORYSet", oNewHistoryPayload, {
-                                success: function (oData, oResponse) {
-                                    // Handle success
-
-                                },
-                                error: function (error) {
-                                    sap.m.MessageToast.show("Error: " + error.message);
-                                }
-                            });
-            
-                            sap.m.MessageToast.show("Vehicle " + sVehicle + " Unassigned Successfully");
-                            this.getView().byId("idHistoryTable").getBinding("items").refresh();
-                        }.bind(this),
-                        error: function (err) {
-                            sap.m.MessageToast.show("Error: " + err.message);
-                        }
-                    });
-            
-                    // Close the dialog after unassign
-                    this.oConfirmDeleteDialog.close();
-                }
-            },
-            
-            onCancelUnassign: function () {
-                // Close the dialog without taking any action
-                this.oConfirmDeleteDialog.close();
-            },
-            
-            // onUnassignPress: function (oEvent) {
-            //     debugger;
+            //         // Open the confirmation dialog
+            //         this.oConfirmDeleteDialog.open();
+            //     } else {
+            //         sap.m.MessageBox.information("Please select a record");
+            //     }
+            // },
+            // onConfirmUnassign: function () {
             //     const oThis = this
-            //     const oModel = this.getView().getModel()
-            //     var oSelected = this.byId("idAssignedTable").getSelectedItem();
+            //     const oModel = this.getView().getModel();
+            //     const oSelected = this._oSelectedItem; // Retrieve the stored selected item
+            
+            //     // Proceed with unassign logic
             //     if (oSelected) {
             //         var sVehicle = oSelected.getBindingContext().getObject().Assignedvehiclenumber;
             //         var sSlotNumber = oSelected.getBindingContext().getObject().Slotnumbers;
-            //         var sDriverName = oSelected.getBindingContext().getObject().Assigneddrivername
-            //         var sTypeofDelivery = oSelected.getBindingContext().getObject().Deliverytype
-            //         var sDriverMobile = oSelected.getBindingContext().getObject().Assigneddrivermobile
-            //         var dCheckInTime = oSelected.getBindingContext().getObject().Assignedcheckintime
-            //         // var oSlotId = oSelected.getBindingContext().getObject().slotNumber_ID
-            //         var oVendorName = oSelected.getBindingContext().getObject().VendorName
+            //         var sDriverName = oSelected.getBindingContext().getObject().Assigneddrivername;
+            //         var sTypeofDelivery = oSelected.getBindingContext().getObject().Deliverytype;
+            //         var sDriverMobile = oSelected.getBindingContext().getObject().Assigneddrivermobile;
+            //         var dCheckInTime = oSelected.getBindingContext().getObject().Assignedcheckintime;
+            //         var oVendorName = oSelected.getBindingContext().getObject().VendorName;
+                    
             //         var currentDate = new Date();
             //         var year = currentDate.getFullYear();
-            //         var month = currentDate.getMonth() + 1; // Months are zero-based
+            //         var month = currentDate.getMonth() + 1;
             //         var day = currentDate.getDate();
             //         var hours = currentDate.getHours();
             //         var minutes = currentDate.getMinutes();
             //         var seconds = currentDate.getSeconds();
-            //         var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`
-            //         var oCheckOutTime = FinalDate
-
+            //         var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`;
+            //         var oCheckOutTime = FinalDate;
+            
             //         // UUID generation
             //         function generateUUID() {
-            //             // Generate random values and place them in the UUID format
             //             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             //                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             //                 return v.toString(16);
             //             });
             //         }
             //         const NewUuid = generateUUID();
-
-            //         // update the slot data
+            
+            //         // Update the slot data
             //         const oUpdatedSlotPayload = {
             //             Status: "AVAILABLE",
             //             Assigneddrivername: "",
@@ -763,9 +673,9 @@ sap.ui.define([
             //             Assigneddeliverytype: "",
             //             VendorName: "",
             //             Assignedcheckintime: ""
-            //         }
-
-            //         // create a record in history
+            //         };
+            
+            //         // Create a record in history
             //         const oNewHistoryPayload = {
             //             Uuid: NewUuid,
             //             Drivername: sDriverName,
@@ -776,170 +686,260 @@ sap.ui.define([
             //             Historyslotnumber: sSlotNumber,
             //             VendorName: oVendorName,
             //             Checkouttime: oCheckOutTime
-            //         }
-
+            //         };
+            
             //         oModel.update(`/ZPARKING_SLOTS_SSet('${sSlotNumber}')`, oUpdatedSlotPayload, {
             //             success: async function (oData, oResponse) {
-
-            //                 // Unassign SMS
-
-            //                 const accountSid = Config.twilio.accountSid;
-            //                 const authToken = Config.twilio.authToken;
-
-            //                 // debugger
-            //                 const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
-            //                 const fromNumber = '+15856485867'; // Replace with your Twilio phone number
-            //                 const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
-
-            //                 // Twilio API endpoint for sending messages
-            //                 const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-
-
-            //                 // Send POST request to Twilio API using jQuery.ajax
-            //                 $.ajax({
-            //                     url: url,
-            //                     type: 'POST',
-            //                     headers: {
-            //                         'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
-            //                     },
-            //                     data: {
-            //                         To: toNumber,
-            //                         From: fromNumber,
-            //                         Body: messageBody
-            //                     },
-            //                     success: function (data) {
-            //                         console.log('SMS sent successfully:', data);
-            //                         // Handle success, e.g., show a success message
-            //                         sap.m.MessageToast.show('SMS sent successfully!');
-            //                     },
-            //                     error: function (error) {
-            //                         console.error('Error sending SMS:', error);
-            //                         // Handle error, e.g., show an error message
-            //                         sap.m.MessageToast.show('Failed to send SMS: ' + error);
-            //                     }
-            //                 });
-
-            //                 // SMS END
-
-            //                 var oImage = oThis.byId("movingImage2");
-            //                 oImage.setVisible(true);
-            //                 oImage.addStyleClass("animate");
-            //                 setTimeout(function () {
-            //                     oImage.setVisible(false);
-            //                 }, 7000);
-
-            //                 // CREATE history
+            //                 oModel.refresh(true)
+            //                 // Handle Twilio SMS and other logic as before
+            
             //                 oModel.create("/ZPARKING_HISTORYSet", oNewHistoryPayload, {
             //                     success: function (oData, oResponse) {
+            //                         // Handle success
 
             //                     },
             //                     error: function (error) {
-            //                         MessageToast.show("Error" + error.message)
+            //                         sap.m.MessageToast.show("Error: " + error.message);
             //                     }
-            //                 })
-
-            //                 oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
-            //                 MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
-
-
-            //             },
+            //                 });
+            
+            //                 sap.m.MessageToast.show("Vehicle " + sVehicle + " Unassigned Successfully");
+            //                 this.getView().byId("idHistoryTable").getBinding("items").refresh();
+            //             }.bind(this),
             //             error: function (err) {
+            //                 sap.m.MessageToast.show("Error: " + err.message);
             //             }
-            //         })
-
-
-
-
-            //         // const oBindlist = oModel.bindList("/history")
-
-            //         // oSelected.getBindingContext().delete("$auto").then(function () {
-
-            //         //     // Add sms code here
-
-            //         //     // Unassign SMS
-
-            //         //     const accountSid = Config.twilio.accountSid;
-            //         //     const authToken = Config.twilio.authToken;
-
-            //         //     // debugger
-            //         //     const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
-            //         //     const fromNumber = '+15856485867'; // Replace with your Twilio phone number
-            //         //     const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
-
-            //         //     // Twilio API endpoint for sending messages
-            //         //     const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-
-
-            //         //     // Send POST request to Twilio API using jQuery.ajax
-            //         //     $.ajax({
-            //         //         url: url,
-            //         //         type: 'POST',
-            //         //         headers: {
-            //         //             'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
-            //         //         },
-            //         //         data: {
-            //         //             To: toNumber,
-            //         //             From: fromNumber,
-            //         //             Body: messageBody
-            //         //         },
-            //         //         success: function (data) {
-            //         //             console.log('SMS sent successfully:', data);
-            //         //             // Handle success, e.g., show a success message
-            //         //             sap.m.MessageToast.show('SMS sent successfully!');
-            //         //         },
-            //         //         error: function (error) {
-            //         //             console.error('Error sending SMS:', error);
-            //         //             // Handle error, e.g., show an error message
-            //         //             sap.m.MessageToast.show('Failed to send SMS: ' + error);
-            //         //         }
-            //         //     });
-
-            //         //     // SMS END
-
-            //         //     var oImage = oThis.byId("movingImage2");
-            //         //     oImage.setVisible(true);
-            //         //     oImage.addStyleClass("animate");
-            //         //     setTimeout(function () {
-            //         //         oImage.setVisible(false);
-            //         //     }, 7000);
-
-            //         //     oBindlist.create(oNewHistory)
-            //         //     oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
-            //         //     var oParkingSlotBinding = oModel.bindList("/parkingSlots");
-
-            //         //     oParkingSlotBinding.filter([
-            //         //         new Filter("slotNumbers", FilterOperator.EQ, sSlotNumber)
-            //         //     ]);
-
-            //         //     oParkingSlotBinding.requestContexts().then(function (aParkingContexts) {
-            //         //         if (aParkingContexts.length > 0) {
-            //         //             var oParkingContext = aParkingContexts[0];
-            //         //             var oParkingData = oParkingContext.getObject();
-            //         //             // Update 
-            //         //             oParkingData.status = "Available"
-            //         //             oParkingContext.setProperty("status", oParkingData.status);
-            //         //             oModel.submitBatch("updateGroup");
-            //         //             oThis.getView().byId("idAllSlots").getBinding("items").refresh();
-            //         //             oModel.refresh(); // Refresh the model to get the latest 
-
-
-            //         //         } else {
-            //         //             MessageToast.show("Something went wrong")
-            //         //         }
-            //         //     })
-
-            //         //     MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
-
-            //         // },
-            //         //     function (oError) {
-            //         //         MessageToast.show("Technical Issue Cannot Unassign", oError);
-            //         //     });
-            //         // this.getView().byId("idAssignedTable").getBinding("items").refresh();
-
-            //     } else {
-            //         MessageToast.show("Please Select a record");
+            //         });
+            
+            //         // Close the dialog after unassign
+            //         this.oConfirmDeleteDialog.close();
             //     }
             // },
+            
+            // onCancelUnassign: function () {
+            //     // Close the dialog without taking any action
+            //     this.oConfirmDeleteDialog.close();
+            // },
+            
+            onUnassignPress: function (oEvent) {
+                debugger;
+                const oThis = this
+                const oModel = this.getView().getModel()
+                var oSelected = this.byId("idAssignedTable").getSelectedItem();
+                if (oSelected) {
+                    var sVehicle = oSelected.getBindingContext().getObject().Assignedvehiclenumber;
+                    var sSlotNumber = oSelected.getBindingContext().getObject().Slotnumbers;
+                    var sDriverName = oSelected.getBindingContext().getObject().Assigneddrivername
+                    var sTypeofDelivery = oSelected.getBindingContext().getObject().Deliverytype
+                    var sDriverMobile = oSelected.getBindingContext().getObject().Assigneddrivermobile
+                    var dCheckInTime = oSelected.getBindingContext().getObject().Assignedcheckintime
+                    // var oSlotId = oSelected.getBindingContext().getObject().slotNumber_ID
+                    var oVendorName = oSelected.getBindingContext().getObject().VendorName
+                    var currentDate = new Date();
+                    var year = currentDate.getFullYear();
+                    var month = currentDate.getMonth() + 1; // Months are zero-based
+                    var day = currentDate.getDate();
+                    var hours = currentDate.getHours();
+                    var minutes = currentDate.getMinutes();
+                    var seconds = currentDate.getSeconds();
+                    var FinalDate = `${year}-${month}-${day} TIME ${hours}:${minutes}:${seconds}`
+                    var oCheckOutTime = FinalDate
+
+                    // UUID generation
+                    function generateUUID() {
+                        // Generate random values and place them in the UUID format
+                        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                            return v.toString(16);
+                        });
+                    }
+                    const NewUuid = generateUUID();
+
+                    // update the slot data
+                    const oUpdatedSlotPayload = {
+                        Status: "AVAILABLE",
+                        Assigneddrivername: "",
+                        Assigneddrivermobile: "",
+                        Assignedvehiclenumber: "",
+                        Assigneddeliverytype: "",
+                        VendorName: "",
+                        Assignedcheckintime: ""
+                    }
+
+                    // create a record in history
+                    const oNewHistoryPayload = {
+                        Uuid: NewUuid,
+                        Drivername: sDriverName,
+                        Drivermobile: sDriverMobile,
+                        Vehiclenumber: sVehicle,
+                        Deliverytype: sTypeofDelivery,
+                        Checkintime: dCheckInTime,
+                        Historyslotnumber: sSlotNumber,
+                        VendorName: oVendorName,
+                        Checkouttime: oCheckOutTime
+                    }
+
+                    oModel.update(`/ZPARKING_SLOTS_SSet('${sSlotNumber}')`, oUpdatedSlotPayload, {
+                        success: async function (oData, oResponse) {
+                            oModel.refresh(true)
+                            // Unassign SMS
+                            const accountSid = Config.twilio.accountSid;
+                            const authToken = Config.twilio.authToken;
+
+                            // debugger
+                            const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
+                            const fromNumber = '+15856485867'; // Replace with your Twilio phone number
+                            const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
+
+                            // Twilio API endpoint for sending messages
+                            const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+
+                            // Send POST request to Twilio API using jQuery.ajax
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                headers: {
+                                    'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+                                },
+                                data: {
+                                    To: toNumber,
+                                    From: fromNumber,
+                                    Body: messageBody
+                                },
+                                success: function (data) {
+                                    console.log('SMS sent successfully:', data);
+                                    // Handle success, e.g., show a success message
+                                    sap.m.MessageToast.show('SMS sent successfully!');
+                                },
+                                error: function (error) {
+                                    console.error('Error sending SMS:', error);
+                                    // Handle error, e.g., show an error message
+                                    sap.m.MessageToast.show('Failed to send SMS: ' + error);
+                                }
+                            });
+
+                            // SMS END
+
+                            var oImage = oThis.byId("movingImage2");
+                            oImage.setVisible(true);
+                            oImage.addStyleClass("animate");
+                            setTimeout(function () {
+                                oImage.setVisible(false);
+                            }, 7000);
+
+                            // CREATE history
+                            oModel.create("/ZPARKING_HISTORYSet", oNewHistoryPayload, {
+                                success: function (oData, oResponse) {
+
+                                },
+                                error: function (error) {
+                                    MessageToast.show("Error" + error.message)
+                                }
+                            })
+
+                            oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
+                            MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
+
+
+                        },
+                        error: function (err) {
+                        }
+                    })
+
+
+
+
+                    // const oBindlist = oModel.bindList("/history")
+
+                    // oSelected.getBindingContext().delete("$auto").then(function () {
+
+                    //     // Add sms code here
+
+                    //     // Unassign SMS
+
+                    //     const accountSid = Config.twilio.accountSid;
+                    //     const authToken = Config.twilio.authToken;
+
+                    //     // debugger
+                    //     const toNumber = `+91${sDriverMobile}` // Replace with recipient's phone number
+                    //     const fromNumber = '+15856485867'; // Replace with your Twilio phone number
+                    //     const messageBody = `Hi ${sDriverName} please move the vehicle from the parking yard.\nIgnore if already left from the yard.\nThank you,\nVishal Parking Management`; // Message content
+
+                    //     // Twilio API endpoint for sending messages
+                    //     const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+
+                    //     // Send POST request to Twilio API using jQuery.ajax
+                    //     $.ajax({
+                    //         url: url,
+                    //         type: 'POST',
+                    //         headers: {
+                    //             'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+                    //         },
+                    //         data: {
+                    //             To: toNumber,
+                    //             From: fromNumber,
+                    //             Body: messageBody
+                    //         },
+                    //         success: function (data) {
+                    //             console.log('SMS sent successfully:', data);
+                    //             // Handle success, e.g., show a success message
+                    //             sap.m.MessageToast.show('SMS sent successfully!');
+                    //         },
+                    //         error: function (error) {
+                    //             console.error('Error sending SMS:', error);
+                    //             // Handle error, e.g., show an error message
+                    //             sap.m.MessageToast.show('Failed to send SMS: ' + error);
+                    //         }
+                    //     });
+
+                    //     // SMS END
+
+                    //     var oImage = oThis.byId("movingImage2");
+                    //     oImage.setVisible(true);
+                    //     oImage.addStyleClass("animate");
+                    //     setTimeout(function () {
+                    //         oImage.setVisible(false);
+                    //     }, 7000);
+
+                    //     oBindlist.create(oNewHistory)
+                    //     oThis.getView().byId("idHistoryTable").getBinding("items").refresh();
+                    //     var oParkingSlotBinding = oModel.bindList("/parkingSlots");
+
+                    //     oParkingSlotBinding.filter([
+                    //         new Filter("slotNumbers", FilterOperator.EQ, sSlotNumber)
+                    //     ]);
+
+                    //     oParkingSlotBinding.requestContexts().then(function (aParkingContexts) {
+                    //         if (aParkingContexts.length > 0) {
+                    //             var oParkingContext = aParkingContexts[0];
+                    //             var oParkingData = oParkingContext.getObject();
+                    //             // Update 
+                    //             oParkingData.status = "Available"
+                    //             oParkingContext.setProperty("status", oParkingData.status);
+                    //             oModel.submitBatch("updateGroup");
+                    //             oThis.getView().byId("idAllSlots").getBinding("items").refresh();
+                    //             oModel.refresh(); // Refresh the model to get the latest 
+
+
+                    //         } else {
+                    //             MessageToast.show("Something went wrong")
+                    //         }
+                    //     })
+
+                    //     MessageToast.show("Vechicle " + sVehicle + " Unassigned Successfully");
+
+                    // },
+                    //     function (oError) {
+                    //         MessageToast.show("Technical Issue Cannot Unassign", oError);
+                    //     });
+                    // this.getView().byId("idAssignedTable").getBinding("items").refresh();
+
+                } else {
+                    MessageToast.show("Please Select a record");
+                }
+            },
             onConfirmReservePress: async function () {
                 debugger
                 if (!this.confirmDialog) {
@@ -974,7 +974,7 @@ sap.ui.define([
 
                     this.getView().getModel().refresh()
 
-                    
+
                 } else {
 
                     MessageToast.show("Select a record to accept reservations")
