@@ -431,7 +431,8 @@ sap.ui.define([
                 } else {
                     oUserView.byId("idDriverName").setValueState("None");
                 }
-                if (!oDriverMobile || oDriverMobile.length !== 10 || !/^\d+$/.test(oDriverMobile)) {
+                if (!oDriverMobile || oDriverMobile.length !== 10 || !/^[6-9]\d{9}$/.test(oDriverMobile)) {
+                   
                     oUserView.byId("idDriverMobile").setValueState("Error");
                     oUserView.byId("idDriverMobile").setValueStateText("Mobile number must be a 10-digit numeric value");
 
@@ -447,7 +448,7 @@ sap.ui.define([
                 } else {
                     oUserView.byId("idVehicleNUmber").setValueState("None");
                 }
-                if (!odeliveryType || odeliveryType === "Select") {
+                if (!odeliveryType || odeliveryType === "SELECT") {
                     oUserView.byId("idTypeOfDelivery").setValueState("Error");
                     oUserView.byId("idTypeOfDelivery").setValueStateText("Please select atleast one option below");
 
@@ -1078,126 +1079,131 @@ sap.ui.define([
  
                 const oFilters = new Filter("Reserveddate", FilterOperator.EQ, oBookedDate)
                 const oFilter2 = new Filter("Reservedslot", FilterOperator.EQ, oReservedSlot)
-                const ofilter3 = new Filter("Status", FilterOperator.NE, "AVAILABLE")
+                // const ofilter3 = new Filter("Status", FilterOperator.NE, "AVAILABLE")
                 const oFilter4 = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
  
  
                 if (oBookedDate === currentDay) {
                     oModel.read("/ZPARKING_SLOTS_SSet", {
-                        filters: [oFilter4, ofilter3],
+                        filters: [oFilter4],
                         success: function (oData) {
-                            if (oData.results.length > 0) {
+                            if (oData.results.length > 0 && oData.results[0].Status !== "AVAILABLE") {
                                 MessageBox.information("Selected slot not available Today")
+                            } else {
+ 
+                                oModel.read("/ZPARKING_RESERVE_SSet", {
+                                    filters: [oFilters, oFilter2],
+                                    success: async function (oData, oResponse) {
+                                        if (oData.results.length > 0) {
+                                            MessageBox.information("A slot not available on selected date")
+                                        } else {
+                                            oModel.update(`/ZPARKING_RESERVE_SSet('${selectedRecordId}')`, NewReservedRecord, {
+                                                success: async function (oData, oResponse) {
+ 
+                                                    // count
+                                                    var count = 0;
+                                                    var oModel = oThis.getView().getModel();
+                                                    oModel.read("/ZPARKING_RESERVE_SSet", {
+                                                        success: function (odata) {
+                                                            // var otemp = odata.results.length;
+                                                            odata.results.forEach((obj) => {
+                                                                if (obj.Reservedslot === "") {
+                                                                    count = count + 1
+                                                                }
+                                                            })
+                                                            oThis.getView().byId("idbadghqwe").setValue(count);
+ 
+                                                        }, error: function (oError) {
+ 
+                                                        }
+                                                    })
+ 
+                                                    const accountSid = Config.twilio.accountSid;
+                                                    const authToken = Config.twilio.authToken;
+ 
+                                                    // debugger
+                                                    const toNumber = `+91${oDriverMobile}` // Replace with recipient's phone number
+                                                    const fromNumber = '+15856485867'; // Replace with your Twilio phone number
+                                                    const messageBody = `Hi ${oDriverName} a Slot number ${sSlotNumber} is reserved on your vehicle number ${oVehicleNumber} \nVendor name: ${oVendorName}. \nThank You,\nVishal Parking Management`; // Message content
+ 
+                                                    // Twilio API endpoint for sending messages
+                                                    const APIendpoint = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+ 
+ 
+                                                    // Send POST request to Twilio API using jQuery.ajax
+                                                    $.ajax({
+                                                        url: APIendpoint,
+                                                        type: 'POST',
+                                                        headers: {
+                                                            'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+                                                        },
+                                                        data: {
+                                                            To: toNumber,
+                                                            From: fromNumber,
+                                                            Body: messageBody
+                                                        },
+                                                        success: function (data) {
+                                                            // console.log('SMS sent successfully:', data);
+                                                            MessageToast.show('SMS sent successfully!');
+                                                        },
+                                                        error: function (error) {
+                                                            // console.error('Error sending SMS:', error);
+                                                            MessageToast.show('Failed to send SMS: ' + error);
+                                                        }
+                                                    });
+ 
+                                                    // SMS END
+                                                    // var oSelected = oThis.byId("idReservationsTable").getSelectedItem();
+ 
+                                                    oThis.byId("_IDGendfgdInput1").setValue("")
+                                                    oThis.byId("_IDGexgrgnInput2").setValue("")
+                                                    oThis.byId("idasgredhmeInput").setValue("")
+                                                    //  this.byId("_IDGewertnSelect1").setValue(oDeliveryType)
+                                                    oThis.byId("idasgredhmeIn0075put").setValue("")
+                                                    oThis.confirmDialog.close()
+ 
+ 
+                                                    // update the slot acc to date
+ 
+                                                    const filter = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
+                                                    oModel.read("/ZPARKING_SLOTS_SSet", {
+                                                        filters: [filter],
+                                                        success: function (oData, resp) {
+                                                            if (oBookedDate === currentDay) {
+                                                                oModel.update(`/ZPARKING_SLOTS_SSet('${oReservedSlot}')`, { Status: "RESERVED" })
+ 
+                                                            }
+ 
+                                                        },
+                                                        error: function (err) {
+                                                            MessageToast.show("Failed to read slots")
+                                                        }
+                                                    })
+ 
+                                                },
+                                                error: async function (err) {
+                                                    MessageToast.show("Failed to read slots")
+                                                }
+                                            })
+ 
+                                        }
+                                    },
+                                    error: async function (err) {
+                                        MessageToast.show("Failed to read slots")
+ 
+                                    }
+                                })
                             }
                         },
                         error: function () {
+ 
                         }
                     })
-                }else{
-
-                    oModel.read("/ZPARKING_RESERVE_SSet", {
-                        filters: [oFilters, oFilter2],
-                        success: async function (oData, oResponse) {
-                            if (oData.results.length > 0) {
-                                MessageBox.information("A slot not available on selected date")
-                            } else {
-                                oModel.update(`/ZPARKING_RESERVE_SSet('${selectedRecordId}')`, NewReservedRecord, {
-                                    success: async function (oData, oResponse) {
+                }
  
-                                    /// count
-                                    var count = 0;
-                                    var oModel = oThis.getView().getModel();
-                                    oModel.read("/ZPARKING_RESERVE_SSet", {
-                                        success: function (odata) {
-                                            // var otemp = odata.results.length;
-                                            odata.results.forEach((obj) => {
-                                                if (obj.Reservedslot === "") {
-                                                    count = count + 1
-                                                }
-                                            })
-                                            oThis.getView().byId("idbadghqwe").setValue(count);
-                                        }, error: function (oError) {
-
-                                        }
-                                    })
- 
-                                    const accountSid = Config.twilio.accountSid;
-                                    const authToken = Config.twilio.authToken;
-
-                                    // debugger
-                                    const toNumber = `+91${oDriverMobile}` // Replace with recipient's phone number
-                                    const fromNumber = '+15856485867'; // Replace with your Twilio phone number
-                                    const messageBody = `Hi ${oDriverName} a Slot number ${sSlotNumber} is reserved on your vehicle number ${oVehicleNumber} \nVendor name: ${oVendorName}. \nThank You,\nVishal Parking Management`; // Message content
-
-                                    // Twilio API endpoint for sending messages
-                                    const APIendpoint = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-
-
-                                    // Send POST request to Twilio API using jQuery.ajax
-                                    $.ajax({
-                                        url: APIendpoint,
-                                        type: 'POST',
-                                        headers: {
-                                            'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
-                                        },
-                                        data: {
-                                            To: toNumber,
-                                            From: fromNumber,
-                                            Body: messageBody
-                                        },
-                                        success: function (data) {
-                                            // console.log('SMS sent successfully:', data);
-                                            MessageToast.show('SMS sent successfully!');
-                                        },
-                                        error: function (error) {
-                                            // console.error('Error sending SMS:', error);
-                                            MessageToast.show('Failed to send SMS: ' + error);
-                                        }
-                                    });
-
-                                    // SMS END
-                                    // var oSelected = oThis.byId("idReservationsTable").getSelectedItem();
- 
-                                    oThis.byId("_IDGendfgdInput1").setValue("")
-                                    oThis.byId("_IDGexgrgnInput2").setValue("")
-                                    oThis.byId("idasgredhmeInput").setValue("")
-                                    //  this.byId("_IDGewertnSelect1").setValue(oDeliveryType)
-                                    oThis.byId("idasgredhmeIn0075put").setValue("")
-                                    oThis.confirmDialog.close()
- 
- 
-                                    // update the slot acc to date
- 
-                                    const filter = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
-                                    oModel.read("/ZPARKING_SLOTS_SSet", {
-                                        filters: [filter],
-                                        success: function (oData, resp) {
-                                            if (oBookedDate === currentDay) {
-                                                oModel.update(`/ZPARKING_SLOTS_SSet('${oReservedSlot}')`, { Status: "RESERVED" })
- 
-                                            }
- 
-                                        },
-                                        error: function (err) {
-                                            MessageToast.show("Failed to read slots")
-                                        }
-                                    })
- 
-                                },
-                                error: async function (err) {
-                                    MessageToast.show("Failed to read slots")
-                                }
-                            })
- 
-                        }
-                    },
-                    error: async function (err) {
-                        MessageToast.show("Failed to read slots")
- 
-                    }
-                })
             },
-            onDeleteReservedPressToCoitenfirm: async function () {
+ 
+        onDeleteReservedPressToConfirm: async function () {
                 const oSelected = this.getView().byId("idReservedTable__").getSelectedItem()
                 if (oSelected) {
                     if (!this.ConfirmDeleteDialog) {
@@ -1237,7 +1243,7 @@ sap.ui.define([
                 success: function () {
 
                     MessageBox.information("Rejected and SMS will be sent")
-                    oThis.ConfirmDeleteDialog.close()
+                  // oThis.ConfirmDeleteDialog.close()
                     // Unassign SMS
 
                     const accountSid = Config.twilio.accountSid;
@@ -1320,18 +1326,17 @@ sap.ui.define([
                                 if (oReservedDate === currentDay) {
                                     var oReservedSlot = element.Reservedslot
                                     const ofilter = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
-                                    oModel.update(`/ZPARKING_SLOTS_SSet('${oReservedSlot}')`,{Status:"RESERVED"},{
-                                        success:function(){
-
+                                    oModel.update(`/ZPARKING_SLOTS_SSet('${oReservedSlot}')`, { Status: "RESERVED" }, {
+                                        success: function () {
                                         },
-                                        error:function(){
+                                        error: function () {
                                             MessageBox.show("Failed to update")
                                         }
                                     })
                                 }
                             })
 
-                        }else{
+                        } else {
                             MessageBox.information("No Reservations found today")
                         }
                     },
@@ -1470,7 +1475,7 @@ sap.ui.define([
                         // newAssignSuccess = oBindList.create(newAssign);
                         oModel.update(`/ZPARKING_SLOTS_SSet('${oslotNumber}')`, newAssignPayload, {
                             success: async function (oData, oResponse) {
-
+                                oModel.refresh();
 
                                 const accountSid = Config.twilio.accountSid;
                                 const authToken = Config.twilio.authToken;
@@ -1571,7 +1576,7 @@ sap.ui.define([
                                     oThis.getView().byId("_dhmeI__nput").setValue("");
                                     oThis.getView().byId("idss__n0075put").setValue("");
                                     oThis.ConfirmAssignDialog.close()
-
+                                    oModel.refresh();
 
                                 },
                                 error: function () {

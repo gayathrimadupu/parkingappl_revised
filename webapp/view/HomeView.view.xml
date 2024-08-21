@@ -60,8 +60,8 @@
 >
     <m:customData>
         <m:BadgeCustomData
-            id="idBadgeCustomData"
-            value="{/ZPARKING_RESERVE_SSet/$count}"
+            id="idbadghqwe"
+           value=""
             visible="true"
             animation="Update"
         />
@@ -252,7 +252,7 @@
                         <blocks>
                             <m:Table
                                 id="idAssignedTable"
-                                mode="MultiSelect"
+                                mode="SingleSelectMaster"
                                 alternateRowColors="true"
                                 items="{path: '/ZPARKING_SLOTS_SSet',filters: [{path: 'Status',operator: 'EQ',value1: 'NOT AVAILABLE'}]}"
                                 class="Table"
@@ -373,7 +373,7 @@
                                 <m:items>
                                     <m:ColumnListItem
                                         id="idBooksTableColListItem"
-                                        type="Navigation"
+                                        
                                         class="TableContent"
                                        
                                     >
@@ -459,6 +459,7 @@
                         <blocks>
                             <m:Table
                                 id="idAllSlots"
+                                 mode="SingleSelectMaster"
                                 alternateRowColors="true"
                                 items="{/ZPARKING_SLOTS_SSet}"
                                 class="customTable"
@@ -511,7 +512,7 @@
                                 <m:items>
                                     <m:ColumnListItem
                                         id="_IDGenColumnListItem1"
-                                        type="Navigation"
+                                       
                                         class="TableContent"
                                     >
                                         <m:cells>
@@ -555,7 +556,7 @@
                         <blocks>
                             <m:Table
                                 id="idReservedTable__"
-                                mode="MultiSelect"
+                                mode="SingleSelectMaster"
                                 alternateRowColors="true"
                                 items="{path
 : '/ZPARKING_RESERVE_SSet',
@@ -593,7 +594,7 @@ value1
                                             text="Delete"
                                             type="Reject"
                                             class="default"
-                                           press="onDeleteReservedPressToCoitenfirm"
+                                           press="onDeleteReservedPress"
                                         />
                                         <!-- <m:Button
                                             id="_IDGenButton2"
@@ -659,7 +660,7 @@ value1
                                 <m:items>
                                     <m:ColumnListItem
                                         id="_IDGenColumnListItem2"
-                                        type="Navigation"
+                                        
                                         class="TableContent"
                                     >
                                         <m:cells>
@@ -809,7 +810,7 @@ value1
                                 <m:items>
                                     <m:ColumnListItem
                                         id="_IDGenColumnListItem3"
-                                        type="Navigation"
+                                       
                                         class="TableContent"
                                     >
                                         <m:cells>

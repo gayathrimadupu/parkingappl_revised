@@ -21,8 +21,7 @@
  
 <Property Name="VendorName" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="VENDOR_NAME" sap:unicode="false" Nullable="false" Type="Edm.String"/>
  
-<Property Name="Assignedvehiclenumber" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="ASSIGNEDVEHICLENUMBER" sap:unicode="false" Nullable="false" Type="Edm.String"/>
- 
+<Property Name="Assignedvehiclenumber" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="ASSIGNEDVEHICLENUMBER" sap:unicode="false" MaxLength="10" Nullable="false" Type="Edm.String"/>
 </EntityType>
  
  
@@ -43,12 +42,12 @@
  
 <Property Name="Vendorname" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="VENDORNAME" sap:unicode="false" Nullable="false" Type="Edm.String"/>
  
-<Property Name="Reservedslot" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="RESERVEDSLOT" sap:unicode="false" Nullable="false" Type="Edm.String"/>
+<Property Name="Reservedslot" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="RESERVEDSLOT" sap:unicode="false" MaxLength="5" Nullable="false" Type="Edm.String"/>
+
  
 <Property Name="Drivername" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="Drivername" sap:unicode="false" Nullable="false" Type="Edm.String" sap:quickinfo="DRIVERNAME"/>
  
-<Property Name="Reserveddate" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="RESERVEDDATE" sap:unicode="false" Nullable="false" Type="Edm.String"/>
- 
+<Property Name="Reserveddate" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="RESERVEDDATE" sap:unicode="false" MaxLength="12" Nullable="false" Type="Edm.String"/>
 </EntityType>
  
  
@@ -63,21 +62,22 @@
  
 <Property Name="Uuid" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="UUID" sap:unicode="false" MaxLength="36" Nullable="false" Type="Edm.String"/>
  
-<Property Name="Vehiclenumber" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="VEHICLENUMBER" sap:unicode="false" Nullable="false" Type="Edm.String"/>
+<Property Name="Vehiclenumber" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="VEHICLENUMBER" sap:unicode="false" MaxLength="15" Nullable="false" Type="Edm.String"/>
  
-<Property Name="Drivername" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="DRIVERNAME" sap:unicode="false" Nullable="false" Type="Edm.String"/>
+<Property Name="Drivername" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="DRIVERNAME" sap:unicode="false" MaxLength="20" Nullable="false" Type="Edm.String"/>
+<Property Name="Drivermobile" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="DRIVERMOBILE" sap:unicode="false" MaxLength="12" Nullable="false" Type="Edm.String"/>
+<Property Name="Deliverytype" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="DELIVERYTYPE" sap:unicode="false" MaxLength="20" Nullable="false" Type="Edm.String"/>
+
  
-<Property Name="Drivermobile" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="DRIVERMOBILE" sap:unicode="false" Nullable="false" Type="Edm.String"/>
+<Property Name="Checkintime" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="CHECKINTIME" sap:unicode="false" MaxLength="40" Nullable="false" Type="Edm.String"/>
  
-<Property Name="Deliverytype" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="DELIVERYTYPE" sap:unicode="false" Nullable="false" Type="Edm.String"/>
+<Property Name="Checkouttime" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="CHECKOUTTIME" sap:unicode="false" MaxLength="40" Nullable="false" Type="Edm.String"/>
+
  
-<Property Name="Checkintime" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="CHECKINTIME" sap:unicode="false" Nullable="false" Type="Edm.String"/>
+<Property Name="VendorName" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="VENDOR_NAME" sap:unicode="false" MaxLength="20" Nullable="false" Type="Edm.String"/>
  
-<Property Name="Checkouttime" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="CHECKOUTTIME" sap:unicode="false" Nullable="false" Type="Edm.String"/>
- 
-<Property Name="VendorName" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="VENDOR_NAME" sap:unicode="false" Nullable="false" Type="Edm.String"/>
- 
-<Property Name="Historyslotnumber" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="HISTORYSLOTNUMBER" sap:unicode="false" Nullable="false" Type="Edm.String"/>
+<Property Name="Historyslotnumber" sap:filterable="false" sap:sortable="false" sap:updatable="false" sap:creatable="false" sap:label="HISTORYSLOTNUMBER" sap:unicode="false" MaxLength="6" Nullable="false" Type="Edm.String"/>
+
  
 </EntityType>
  
@@ -92,9 +92,9 @@
  
 </EntityContainer>
  
-<atom:link rel="self" href="https://VHCALAKECI.ARTIHCUS.COM:44306/sap/opu/odata/sap/ZPARKING_APP_SRVC_S_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+<atom:link rel="self" href="http://vhcalakeci.artihcus.com:50600/sap/opu/odata/sap/ZPARKING_APP_SRVC_S_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
  
-<atom:link rel="latest-version" href="https://VHCALAKECI.ARTIHCUS.COM:44306/sap/opu/odata/sap/ZPARKING_APP_SRVC_S_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+<atom:link rel="latest-version" href="http://vhcalakeci.artihcus.com:50600/sap/opu/odata/sap/ZPARKING_APP_SRVC_S_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
  
 </Schema>
  
