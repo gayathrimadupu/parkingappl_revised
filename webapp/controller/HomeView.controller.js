@@ -357,31 +357,26 @@ sap.ui.define([
             //     oBinding.filter(allFilter);
 
             // },
-            onSearchHistory: function (oEvent) {
-                debugger
-                // add filter for search
-                // var aFilters = [];
-                var sQuery = oEvent.getSource().getValue();
-                if (sQuery && sQuery.length > 0) {
-                   // var filterVehicle = new Filter("Vehiclenumber", FilterOperator.Contains, sQuery);
-                    // var filterSlot = new Filter("Historyslotnumber", FilterOperator.Contains, sQuery);
-                    var filterName = new Filter("Drivername", FilterOperator.EQ, sQuery);
-                    var filterMobile = new Filter("Drivermobile", FilterOperator.Contains, sQuery);
-                    var filterDelivery = new Filter("Deliverytype", FilterOperator.Contains, sQuery);
-                    var filterVendor = new Filter("VendorName", FilterOperator.Contains, sQuery);
+            // onSearchHistory: function (oEvent) {
+            //     debugger
+            //     // add filter for search
+            //     // var aFilters = [];
+            //     var sQuery = oEvent.getSource().getValue();
+            //     if (sQuery && sQuery.length > 0) {
+            //         // var filterVehicle = new Filter("Vehiclenumber", FilterOperator.Contains, sQuery);
+            //         // var filterSlot = new Filter("Historyslotnumber", FilterOperator.Contains, sQuery);
+            //         var filterName = new Filter("Drivername", FilterOperator.EQ, sQuery);
+            //         var filterMobile = new Filter("Drivermobile", FilterOperator.Contains, sQuery);
+            //         var filterDelivery = new Filter("Deliverytype", FilterOperator.Contains, sQuery);
+            //         var filterVendor = new Filter("VendorName", FilterOperator.Contains, sQuery);
+                //         var allFilter = new Filter([filterName, filterMobile, filterDelivery, filterVendor]);
+            //     }
 
-                    var allFilter = new Filter([filterName, filterMobile, filterDelivery, filterVendor]);
-                }
-
-                // update list binding
-                var oList = this.byId("idHistoryTable");
-                var oBinding = oList.getBinding("items");
-                oBinding.filter(allFilter);
-
-            },
-            // refreshDropdown: function() {
-            //     var oModel = this.getView().getModel();
-            //     oModel.refresh(true); // Refresh the model to get the latest data
+            //     // update list binding
+            //     var oList = this.byId("idHistoryTable");
+            //     var oBinding = oList.getBinding("items");
+            //     oBinding.filter(allFilter);
+           
             // },
             onAssignPress: async function (oEvent) {
                 debugger
@@ -1079,7 +1074,7 @@ sap.ui.define([
  
                 const oFilters = new Filter("Reserveddate", FilterOperator.EQ, oBookedDate)
                 const oFilter2 = new Filter("Reservedslot", FilterOperator.EQ, oReservedSlot)
-                // const ofilter3 = new Filter("Status", FilterOperator.NE, "AVAILABLE")
+               // const ofilter3 = new Filter("Status", FilterOperator.NE, "AVAILABLE")
                 const oFilter4 = new Filter("Slotnumbers", FilterOperator.EQ, oReservedSlot)
  
  
@@ -1243,7 +1238,7 @@ sap.ui.define([
                 success: function () {
 
                     MessageBox.information("Rejected and SMS will be sent")
-                  // oThis.ConfirmDeleteDialog.close()
+                    oThis.ConfirmDeleteDialog.close()
                     // Unassign SMS
 
                     const accountSid = Config.twilio.accountSid;
@@ -1350,22 +1345,24 @@ sap.ui.define([
                 if (!this.ConfirmAssignDialog) {
                     this.ConfirmAssignDialog = await this.loadFragment("ConfirmAssign")
                 }
-                const oSelected = this.getView().byId("idReservedTable__").getSelectedItem(),
-                    oObject = oSelected.getBindingContext().getObject(),
-                    oDriverName = oObject.Drivername,
-                    oDriverMobile = oObject.Drivermobile,
-                    oVehicleNumber = oObject.Vehiclenumber,
-                    oVendorName = oObject.Vendorname,
-                    oSlot = oObject.Reservedslot
-
+                const oSelected = this.getView().byId("idReservedTable__").getSelectedItem()
                 if (oSelected) {
+                    const oObject = oSelected.getBindingContext().getObject(),
+                        oDriverName = oObject.Drivername,
+                        oDriverMobile = oObject.Drivermobile,
+                        oVehicleNumber = oObject.Vehiclenumber,
+                        oVendorName = oObject.Vendorname,
+                        oSlot = oObject.Reservedslot
+
+              
                     this.ConfirmAssignDialog.open()
                     this.getView().byId("_IDGen__dfgdInput1").setValue(oDriverName)
                     this.getView().byId("_IDGexgrsdfgnIn__put2").setValue(oDriverMobile)
                     this.getView().byId("afidasgredhmeI__nput").setValue(oVehicleNumber)
                     this.getView().byId("idss__n0075put").setValue(oVendorName)
                     this.getView().byId("_dhmeI__nput").setValue(oSlot)
-
+                }else{
+                    MessageToast.show("Please select a record")
                 }
 
             },
@@ -1399,7 +1396,7 @@ sap.ui.define([
                     oDriverMobile = oUserView.byId("_IDGexgrsdfgnIn__put2").getValue(),
                     oVehicleNumber = oUserView.byId("afidasgredhmeI__nput").getValue(),
                     oVendorName = oUserView.byId("idss__n0075put").getValue(),
-                    odeliveryType = oUserView.byId("_IDGewertnSelect1").getSelectedKey(),
+                    odeliveryType = oUserView.byId("_IDGewertnSelect1").getSelectedKey().toUpperCase(),
                     oslotNumber = oUserView.byId("_dhmeI__nput").getValue(),
                     oCheckInTime = FinalDate
 
@@ -2075,6 +2072,161 @@ sap.ui.define([
             //         });
 
             // }
+
+// search
+onSearchHistory: async function (oEvent) {
+    debugger;
+    var sQuery = oEvent.getParameter("newValue").trim();
+    var oList = this.byId("idHistoryTable"); // Assuming this is your table ID
+    var oBinding = oList.getBinding("items");
+
+    // Check if the binding is available
+    if (!oBinding) {
+        console.error("Binding not found on the list");
+        return;
+    }
+
+    // If no search query, fetch all data and reset the table
+    if (sQuery === "") {
+        try {
+            var oModel = this.getView().getModel(); // Assuming the model is bound to the view
+            var sPath = "/ZPARKING_HISTORYSet"; // Your EntitySet path
+
+            // Fetch the data from the OData service
+            var aAllData = await new Promise((resolve, reject) => {
+                oModel.read(sPath, {
+                    success: function (oData) {
+                        resolve(oData.results);
+                    },
+                    error: function (oError) {
+                        console.error("Failed to fetch all data:", oError);
+                        reject(oError);
+                    }
+                });
+            });
+
+            // Create a new JSON model with all the data
+            var oAllDataModel = new sap.ui.model.json.JSONModel(aAllData);
+
+            // Bind the all data model to the table
+            oList.setModel(oAllDataModel);
+            oList.bindItems({
+                path: "/",
+                template: oList.getBindingInfo("items").template
+            });
+        } catch (error) {
+            console.error("Error fetching all data:", error);
+        }
+        return;
+    }
+
+    // If there is a search query, perform the manual filtering
+    var aContexts = oBinding.getContexts();
+    var aItems = aContexts.map(function (oContext) {
+        return oContext.getObject();
+    });
+
+    // Filter the data based on the query
+    var aFilteredItems = aItems.filter(function (oItem) {
+        return oItem.Drivername.includes(sQuery) ||
+            oItem.Drivermobile.includes(sQuery) ||
+            oItem.Deliverytype.includes(sQuery) ||
+            oItem.VendorName.includes(sQuery) ||
+            oItem.Vehiclenumber.includes(sQuery) ||
+            oItem.Historyslotnumber.includes(sQuery) ||
+            oItem.Checkintime.includes(sQuery) ||
+            oItem.Checkouttime.includes(sQuery)
+    });
+
+    // Create a new JSON model with the filtered data
+    var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredItems);
+
+    // Bind the filtered model to the table
+    oList.setModel(oFilteredModel);
+    oList.bindItems({
+        path: "/",
+        template: oList.getBindingInfo("items").template
+    });
+},
+onSearch: async function (oEvent) {
+    debugger;
+    var sQuery = oEvent.getParameter("newValue").trim();
+    var oList = this.byId("idAssignedTable"); // Assuming this is your table ID
+    var oBinding = oList.getBinding("items");
+
+    // Check if the binding is available
+    if (!oBinding) {
+        console.error("Binding not found on the list");
+        return;
+    }
+
+    // If no search query, fetch all data and reset the table
+    if (sQuery === "") {
+        try {
+            var oModel = this.getView().getModel(); // Assuming the model is bound to the view
+            var sPath = "/ZPARKING_SLOTS_SSet"; // Your EntitySet path
+
+            // Fetch the data from the OData service
+            // const ofilter = new Filter("Status", FilterOperator.EQ, "NOT AVAILABLE")
+
+            var aAllData = await new Promise((resolve, reject) => {
+                oModel.read(sPath, {
+                    filters: [new sap.ui.model.Filter("Status", sap.ui.model.FilterOperator.EQ, "NOT AVAILABLE")],
+                    success: function (oData) {
+
+                        resolve(oData.results);
+                    },
+                    error: function (oError) {
+                        console.error("Failed to fetch all data:", oError);
+                        reject(oError);
+                    }
+                });
+            });
+
+            // Create a new JSON model with all the data
+            var oAllDataModel = new sap.ui.model.json.JSONModel(aAllData);
+
+            // Bind the all data model to the table
+            oList.setModel(oAllDataModel);
+            oList.bindItems({
+                path: "/",
+                template: oList.getBindingInfo("items").template
+            });
+        } catch (error) {
+            console.error("Error fetching all data:", error);
+        }
+        return;
+    }
+
+    // If there is a search query, perform the manual filtering
+    var aContexts = oBinding.getContexts();
+    var aItems = aContexts.map(function (oContext) {
+        return oContext.getObject();
+    });
+
+    // Filter the data based on the query
+    var aFilteredItems = aItems.filter(function (oItem) {
+
+        if (oItem.Assignedvehiclenumber !== "") {
+            return oItem.Slotnumbers.includes(sQuery) ||
+                oItem.Assigneddrivername.includes(sQuery) ||
+                oItem.Assigneddrivermobile.includes(sQuery) ||
+                oItem.Assigneddeliverytype.includes(sQuery) ||
+                oItem.VendorName.includes(sQuery) ||
+                oItem.Assignedvehiclenumber.includes(sQuery)
+        }
+    });
+
+    // Create a new JSON model with the filtered data
+    var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredItems);
+
+    // Bind the filtered model to the table
+    oList.setModel(oFilteredModel);
+    oList.bindItems({
+        path: "/",
+        template: oList.getBindingInfo("items").template
+    });
+},
 
 
         })

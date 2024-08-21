@@ -594,7 +594,7 @@ value1
                                             text="Delete"
                                             type="Reject"
                                             class="default"
-                                           press="onDeleteReservedPress"
+                                          press="onDeleteReservedPressToConfirm"
                                         />
                                         <!-- <m:Button
                                             id="_IDGenButton2"
