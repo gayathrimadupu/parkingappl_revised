@@ -277,8 +277,7 @@
                                         <m:Button
                                             id="idBtnEdit"
                                             text="Edit"
-                                            icon="sap-icon://edit"
-                                            type="Emphasized"
+                                            type="Transparent"
                                             class="buttonBlue"
                                             press="onEditPress"
                                             tooltip="Click to Edit"
@@ -286,8 +285,7 @@
                                         <m:Button
                                             id="idBtnSave"
                                             text="Save"
-                                            icon="sap-icon://save"
-                                            type="Accept"
+                                            class="onSaveBTnFromAllocated"
                                             press="onSavePress"
                                             tooltip="Save changes"
                                             visible="false"
@@ -296,14 +294,14 @@
                                             id="idBtUnassign"
                                             visible="true"
                                             text="Unassign"
-                                            type="Reject"
+                                            class="onUnAssignBtnAllocated"
                                             press="onUnassignPress"
                                             tooltip="Click to Unassign"
                                         />
                                         <m:Button
                                             id="idBtnCancel"
                                             text="Cancel"
-                                            type="Transparent"
+                                            class="onCancelBtnfromAllocated"
                                             visible="true"
                                             press="onCanclePress"
                                             tooltip="Click to Cancel"
@@ -582,18 +580,14 @@ value1
                                         />
                                         <m:Button
                                             id="idJVGYTFKJJPP"
-                                            icon="sap-icon://add"
                                             text="Assign"
-                                            type="Accept"
-                                            class="default"
+                                            class="onAssignBtn"
                                             press="onAssignfromReservations"
                                         />
                                         <m:Button
                                             id="idJJPP"
-                                            icon="sap-icon://reject"
                                             text="Delete"
-                                            type="Reject"
-                                            class="default"
+                                            class="onDeleteBtn"
                                           press="onDeleteReservedPressToConfirm"
                                         />
                                         <!-- <m:Button

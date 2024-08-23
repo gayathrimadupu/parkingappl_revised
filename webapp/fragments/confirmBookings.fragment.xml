@@ -34,23 +34,29 @@
                 <Label
                     id="_IDGenLaedgfbel1"
                     text="Driver Name"
+
                 />
-                <Input id="_IDGendfgdInput1" />
+                <Input id="_IDGendfgdInput1"
+                  editable="false" />
                 <Label
                     id="_IDGenLxfbvgdthabel2"
                     text="Driver Mobile"
+                    
                 />
-                <Input id="_IDGexgrgnInput2" />
+                <Input id="_IDGexgrgnInput2"
+                  editable="false" />
                 <Label
                     id="_IDGenLabel3"
                     text="Vehicle Number"
                 />
-                <Input id="idasgredhmeInput" />
+                <Input id="idasgredhmeInput" 
+                  editable="false"/>
                 <Label
                     id="_IDGesfdvg654nLabel3"
                     text="Vendor Name"
                 />
-                <Input id="idasgredhmeIn0075put" />
+                <Input id="idasgredhmeIn0075put"
+                  editable="false" />
                 <Label
                     id="_IDGenLasgfsdfbel3"
                     text="Slot Number"

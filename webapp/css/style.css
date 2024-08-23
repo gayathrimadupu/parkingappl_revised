@@ -77,3 +77,30 @@
     background-color: #bd1717; /* Light gray background */
     color: #333; /* Dark text */
 }
+
+.onAssignBtn, .onSaveBTnFromAllocated{
+    background-color: white !important;
+    color: green;
+}
+.onDeleteBtn, .onUnAssignBtnAllocated, .onCancelBtnfromAllocated{
+    background-color: white !important;
+    color: red;
+}
+.onAssignBtn .sapMBtnText{
+    color: green !important;
+}
+.onSaveBTnFromAllocated .sapMBtnText{
+    color: green !important;
+}
+.onDeleteBtn .sapMBtnText{
+    color: red !important;
+}
+.onUnAssignBtnAllocated .sapMBtnText{
+    color: red !important;
+}
+.onCancelBtnfromAllocated .sapMBtnText{
+    color: red !important;
+}
+.StatusBold{
+    font-weight: bold;
+}
